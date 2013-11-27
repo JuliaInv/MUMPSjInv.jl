@@ -112,7 +112,11 @@ end
 
 function destroyMUMPS(factor::MUMPSfactorization)
     #  free memory
-        ptr = factor.ptr
-    ccall( (:destroy_mumps_, "../lib/MUMPS"),
-               Int64, (Ptr{Int64}, ), &ptr );
+	if factor.real
+    	ccall( (:destroy_mumps_, "../lib/MUMPS"),
+               Int64, (Ptr{Int64}, ), &factor.ptr );
+	else
+    	ccall( (:destroy_mumps_cmplx_, "../lib/MUMPS"),
+               Int64, (Ptr{Int64}, ), &factor.ptr );
+	end
 end
