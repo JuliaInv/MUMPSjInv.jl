@@ -36,64 +36,18 @@ MEM_EX: On the 64^3 grid computation was interrupted, memory was insufficient an
 
 ToDo: Make MUMPS available from Julia's package manager! 
 
-### Download Files
-Either download a ZIP archive provided here or (preferable) clone this project using GIT into a directory of your choice, for instance, ~/MyPackageDirectory. To make sure, Julia can find the package include the directory into the LOAD_PATH. To find out what the LOAD_PATH is, type (in Julia)
 
-```
-	LOAD_PATH
-```
+## Copyright
 
-To add your package path to the LOAD_PATH type
-```
-	push!(LOAD_PATH, "~/MyPackageDirectory") 
-```
+Please make sure you have read and understood the licenses of [MUMPS  4.10.0](http://graal.ens-lyon.fr/MUMPS/index.php?page=dwnld)  and [Metis (4.0.3)](http://www.filewatcher.com/m/metis-4.0.3.tar.gz.522624-0.html). We have included versions in the src directory. The wrapper itself is provided as free software under MIT License in the hope it is useful.
 
+Note that this software is provided "as is" with absolutely no warranty. Use at your own risk.
 
-### Compile Metis and MUMPS
-Please make sure you have read and understood the licenses of [MUMPS  4.10.0](http://graal.ens-lyon.fr/MUMPS/index.php?page=dwnld)  and [Metis (4.0.3)](http://www.filewatcher.com/m/metis-4.0.3.tar.gz.522624-0.html). We have included versions in the src directory. 
+## Building
 
-You first have to compile metis. To this end open a Terminal and
-```
-	cd MUMPS/src/metis-4.0.3
-	make
-```
-
-Then you need to compile MUMPS (both real and complex version)
-```
-	cd ../MUMPS_4.10.0
-	make
-	make z
-```
-
-Finally you need to compile the shared library
-```
-	cd ..
-	make
-```
-
-This should produce dynamic libraries placed in the MUMPS/lib directory.
+Run the makefile in located in the src directory. Please do a pull-request if you have improvements. 
 
 ### Run some tests
 
-Some test cases are provided in MUMPS/tests. Startup Julia and try running a divgrad example.
-
-## Platform specific notes
-
-Lets collect some platform build instructions here.
-
-### Windows
-
-anything to bear in mind?
-
-### Linux
-
-anything to bear in mind?
-
-### Mac OS
-
-When compiling MUMPS, please provide a path to your BLAS library. To this end edit line 21 in MUMPS/src/MUMPS_4.10.0/Makefile.inc to:
-
-```
-LIBBLAS=/System/Library/Frameworks/Accelerate.framework/Frameworks/vecLib.framework/Versions/Current/libBLAS.dylib
-```
+Some test cases are provided in MUMPS/tests. Startup Julia and try running the above divgrad benchmark and other tests.
 
