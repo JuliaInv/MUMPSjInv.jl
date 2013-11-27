@@ -1,10 +1,10 @@
 
-   
-!DIR$ ATTRIBUTES DLLEXPORT :: factor_mumps_cmplx, solve_mumps_cmplx, destroy_mumps_cmplx   
-   
+  
 !-------------------------------------------------
    
 function factor_mumps_cmplx( n, sym, A,jA,iA, ierr )  result(pm_out)
+!DIR$ ATTRIBUTES DLLEXPORT :: factor_mumps_cmplx   
+!DIR$ ATTRIBUTES ALIAS: 'factor_mumps_cmplx_':: factor_mumps_cmplx
 
 use mumps_cmplx_mod, only: init, convert_to_mumps_format, factor_matrix, destroy
 implicit none
@@ -50,6 +50,8 @@ end  function factor_mumps_cmplx
 subroutine solve_mumps_cmplx( pm_in, nrhs, rhs, x, transpose )
 ! Solve A*x = rhs
 
+!DIR$ ATTRIBUTES DLLEXPORT :: solve_mumps_cmplx
+!DIR$ ATTRIBUTES ALIAS: 'solve_mumps_cmplx_':: solve_mumps_cmplx
 use mumps_cmplx_mod, only: solve
 
 implicit none
@@ -75,6 +77,9 @@ end subroutine solve_mumps_cmplx
 
 subroutine destroy_mumps_cmplx( pm_in )
 !  Destroy the instance (deallocate internal data structures)
+
+!DIR$ ATTRIBUTES DLLEXPORT :: destroy_mumps_cmplx   
+!DIR$ ATTRIBUTES ALIAS: 'destroy_mumps_cmplx_':: destroy_mumps_cmplx
 use mumps_cmplx_mod, only: destroy
 
 implicit none

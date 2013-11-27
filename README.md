@@ -34,7 +34,10 @@ MEM_EX: On the 64^3 grid computation was interrupted, memory was insufficient an
 
 ## Installing MUMPS
 
-ToDo: Make MUMPS available from Julia's package manager! 
+This package was tested on Mac and Ubuntu only. Here, open a terminal navigate to MUMPS/src and run make. Please do a pull-request if you have improvements. 
+
+
+**ToDo: Make MUMPS available from Julia's package manager! **
 
 
 ## Copyright
@@ -43,9 +46,6 @@ Please make sure you have read and understood the licenses of [MUMPS  4.10.0](ht
 
 Note that this software is provided "as is" with absolutely no warranty. Use at your own risk.
 
-## Building
-
-Run the makefile in located in the src directory. Please do a pull-request if you have improvements. 
 
 ### Run some tests
 

@@ -1,1 +1,14 @@
 *.mod
+MUMPS
+*.o
+*.a
+mtest
+graphchk
+kmetis
+src/metis-4.0.3/mesh2dual
+src/metis-4.0.3/mesh2nodal
+src/metis-4.0.3/oemetis
+src/metis-4.0.3/onmetis
+src/metis-4.0.3/partdmesh
+src/metis-4.0.3/partnmesh
+src/metis-4.0.3/pmetis
