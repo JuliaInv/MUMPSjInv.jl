@@ -1,21 +1,25 @@
-function solveMUMPS(A::SparseMatrixCSC, rhs::Array, x::Array=[], tr=0, sym=1)
+function solveMUMPS(A::SparseMatrixCSC, rhs::Array, x::Array=[], sym=0,tr=0)
 
 	n    = size(rhs,1)
 	nrhs = size(rhs,2)
-	ncol = size(A,2)
-	nrow = size(A,1)
 	
-	# check size of rhs, allocate space for x
-	if tr==1
-		if n != ncol;  error("solveMUMPS: wrong size of rhs"); end
-		x = isempty(x) ? x = zeros(nrow,nrhs) : x
-		if size(x)!=(nrow,nrhs); error("applyMUMPS: wrong size of x provided");end
-    else
-		if n != nrow; error("solveMUMPS: wrong size of rhs"); end
-		x = isempty(x) ? x = zeros(ncol,nrhs) : x
-		if size(x)!=(ncol,nrhs); error("applyMUMPS: wrong size of x provided");end
-    end
-
+	if size(A,1)!=n || size(A,2) != n;
+		error("solveMUMPS: matrix must be square and match length(rhs).")
+	end
+	
+	if isempty(x);
+		x = zeros(n,nrhs)
+	elseif size(x)!=(n,nrhs); 
+		error("applyMUMPS: wrong size of x provided")
+	end
+	
+	if norm(rhs)==0
+		x = rhs
+		return x
+	end
+	
+	
+	
 	# make x complex if necessary
     x = isreal(rhs) ? x : complex(x)
 
@@ -32,29 +36,32 @@ function solveMUMPS(A::SparseMatrixCSC, rhs::Array, x::Array=[], tr=0, sym=1)
 end
 
 
-function factorMUMPS(A::SparseMatrixCSC,sym=1)
+function factorMUMPS(A::SparseMatrixCSC,sym=0)
 	# Generate LU-factorization of real matrix A, 'sym' can be: 0=unsymmetric, 1=symm. pos def, 2=general symmetric
 	
-    nrow  = size(A,1);
-    ncol  = size(A,2);
-    mumpsstat = [0];
+    if size(A,1) != size(A,2)
+		error("factorMUMPS: Matrix must be square!")
+  	end
+	n  = size(A,1);
+   	
+ 	mumpsstat = [0];
 	isReal = iseltype(A,Real)
     
     tic();
 		if isReal
     		p  = ccall( (:factor_mumps_, "../lib/MUMPS"),
     			 Int64, ( Ptr{Int64}, Ptr{Int64}, Ptr{Float64}, Ptr{Int64}, Ptr{Int64}, Ptr{Int64}),
-    	         &nrow, &sym, A.nzval, A.rowval, A.colptr, mumpsstat);
+    	         &n, &sym, A.nzval, A.rowval, A.colptr, mumpsstat);
     	else
 		    p  = ccall( (:factor_mumps_cmplx_, "../lib/MUMPS"),
 		    		 Int64, ( Ptr{Int64}, Ptr{Int64}, Ptr{Complex64}, Ptr{Int64}, Ptr{Int64}, Ptr{Int64}),
-		             &nrow, &sym, A.nzval, A.rowval, A.colptr, mumpsstat);
+		             &n, &sym, A.nzval, A.rowval, A.colptr, mumpsstat);
 		end
     facTime = toc();
     
     checkMUMPSerror(mumpsstat);
     
-    factor = MUMPSfactorization(p,nrow,ncol,isReal,facTime);
+    factor = MUMPSfactorization(p,n,isReal,facTime);
     return factor
 end
 
@@ -80,23 +87,19 @@ function applyMUMPS(factor::MUMPSfactorization,rhs::Array,x::Array=[],tr=0)
     rhs  = reshape(rhs,n,nrhs)
 
 	# check size of rhs, allocate space for x
-	if tr==1
-		if n != factor.ncol;  error("applyMUMPS: wrong size of rhs"); end
-		x = isempty(x) ? x = zeros(factor.nrow,nrhs) : x
-        if size(x)!=(factor.nrow,nrhs); error("applyMUMPS: wrong size of x provided"); end
-    else
-		if n != factor.nrow; error("applyMUMPS: wrong size of rhs"); end
-		x = isempty(x) ? x = zeros(factor.ncol,nrhs) : x
-        if size(x)!=(factor.ncol,nrhs); error("applyMUMPS: wrong size of x provided"); end
-    end
+	if n != factor.n;  error("applyMUMPS: wrong size of rhs"); end
+	x = isempty(x) ? x = zeros(n,nrhs) : x
+    if size(x)!=(n,nrhs); error("applyMUMPS: wrong size of x provided"); end
     
-	if isreal(rhs)!=factor.real
-	   factor.real  ? error("applyMUMPS: rhs must be real.") : 	error("applyMUMPS: rhs must be complex.")
+	if factor.real && !isreal(rhs)
+	   error("applyMUMPS: rhs must be real.")	
 	end
+	
 
 	 # make x complex if necessary
-	 x = factor.real ? x : complex(x)
-    
+	 x   = factor.real ? x   : complex(x)
+     rhs = factor.real ? rhs : complex(rhs)
+	
      ptr = factor.ptr
 	 if factor.real
      	ccall( (:solve_mumps_, "../lib/MUMPS"),

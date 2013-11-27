@@ -18,12 +18,12 @@ rhs2 = randn(n2,nrhs);
 
 println("Factorize complex matrix")
 tic();
-F1 = factorMUMPS(A);
+F1 = factorMUMPS(A,1);
 toc();
 
 println("Factorize real matrix")
 tic();
-F2 = factorMUMPS(A2);
+F2 = factorMUMPS(A2,1);
 toc();
 
 println("Solve complex system")

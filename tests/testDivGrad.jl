@@ -10,7 +10,7 @@ n = size(A,1);
 println("Test for real SPD matrix: one rhs");
 rhs = randn(n);
 
-x = solveMUMPS(A,rhs);
+x = solveMUMPS(A,rhs,[],1);
 err  =  norm(A*x-rhs) / norm(rhs);
 @test err < 1e-14
 
@@ -19,7 +19,7 @@ println("Test for real SPD matrix: multiple rhs");
 nrhs = 10;
 rhs = randn(n,nrhs);
 
-x = solveMUMPS(A,rhs);
+x = solveMUMPS(A,rhs,[],1);
 
 err = zeros(nrhs)
 for i=1:nrhs
@@ -34,17 +34,17 @@ A = A + im*spdiagm(r,0);
 
 rhs = randn(n) + im*randn(n);
 
-x = solveMUMPS(A,rhs);
+x = solveMUMPS(A,rhs,[],1);
 
 err=  norm(A*x-rhs) / norm(rhs);
 @test err < 1e-14
 
 # COMPLEX : test for multiple rhs
-println("Test for complex SPD matrix: one rhs");
+println("Test for complex SPD matrix: multiple rhs");
 nrhs = 10;
 rhs = randn(n,nrhs) + im*randn(n,nrhs);
 
-x = solveMUMPS(A,rhs);
+x = solveMUMPS(A,rhs,[],2);
 
 err = zeros(nrhs)
 for i=1:nrhs
