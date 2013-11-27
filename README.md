@@ -1,6 +1,6 @@
 #MUMPS
 
-Efficiently solving large and sparse linear systems is essential in many areas of scientific computing. This project provides an interface to [MUMPS ( a MUltifrontal Massively Parallel sparse direct Solver)](http://mumps.enseeiht.fr/) in Julia. To improve the memory-efficiency of the method the software package  [METIS (Serial Graph Partitioning and Fill-reducing Matrix Ordering)](http://glaros.dtc.umn.edu/gkhome/views/metis) is used. 
+Efficiently solving large and sparse linear systems is essential in many areas of scientific computing. This project provides an interface to [MUMPS ( a MUltifrontal Massively Parallel sparse direct Solver)](http://mumps.enseeiht.fr/) in Julia. To improve the memory-efficiency of the method the software package  [METIS (Serial Graph Partitioning and Fill-reducing Matrix Ordering)](http://glaros.dtc.umn.edu/gkhome/views/metis) is used. Please refer to the MUMPS and metis websites for more information and updated versions.
 
 ## Benchmark Example
 
@@ -32,6 +32,8 @@ As above, we obtain  discretizations of Poisson's equation for different grid si
 
 MEM_EX: On the 64^3 grid computation was interrupted, memory was insufficient and Julia began swapping.
 
+Some more tests are provided in MUMPS/tests. 
+
 ## Installing MUMPS
 
 This package was tested on Mac and Ubuntu only. Here, open a terminal navigate to MUMPS/src and run make. Please do a pull-request if you have improvements. 
@@ -47,7 +49,4 @@ Please make sure you have read and understood the licenses of [MUMPS  4.10.0](ht
 Note that this software is provided "as is" with absolutely no warranty. Use at your own risk.
 
 
-### Run some tests
-
-Some test cases are provided in MUMPS/tests. Startup Julia and try running the above divgrad benchmark and other tests.
 
