@@ -55,7 +55,7 @@ function factorMUMPS(A::SparseMatrixCSC,sym=0)
     	else
 		    p  = ccall( (:factor_mumps_cmplx_, "../lib/MUMPS"),
 		    		 Int64, ( Ptr{Int64}, Ptr{Int64}, Ptr{Complex64}, Ptr{Int64}, Ptr{Int64}, Ptr{Int64}),
-		             &n, &sym, A.nzval, A.rowval, A.colptr, mumpsstat);
+		             &n, &sym,  convert(Ptr{Complex64}, pointer(A.nzval)), A.rowval, A.colptr, mumpsstat);
 		end
     facTime = toc();
     
@@ -108,7 +108,7 @@ function applyMUMPS(factor::MUMPSfactorization,rhs::Array,x::Array=[],tr=0)
 	else
 		ccall( (:solve_mumps_cmplx_, "../lib/MUMPS"),
 		       Int64, (Ptr{Int64}, Ptr{Int64}, Ptr{Complex64}, Ptr{Complex64}, Ptr{Int64} ),
-		               &ptr,        &nrhs,     rhs,            x,              &tr)
+		               &ptr,        &nrhs,   convert(Ptr{Complex64}, pointer(rhs)),   convert(Ptr{Complex64}, pointer(x)),   &tr)
 	end
     return x
 end
