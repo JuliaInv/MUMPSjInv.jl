@@ -2,6 +2,13 @@
 
 Efficiently solving large and sparse linear systems is essential in many areas of scientific computing. This project provides an interface to [MUMPS ( a MUltifrontal Massively Parallel sparse direct Solver)](http://mumps.enseeiht.fr/) in Julia. To improve the memory-efficiency of the method the software package  [METIS (Serial Graph Partitioning and Fill-reducing Matrix Ordering)](http://glaros.dtc.umn.edu/gkhome/views/metis) is used. Please refer to the MUMPS and metis websites for more information and updated versions.
 
+## Copyright
+
+Please make sure you have read and understood the licenses of [MUMPS  4.10.0](http://graal.ens-lyon.fr/MUMPS/index.php?page=dwnld)  and [Metis (4.0.3)](http://www.filewatcher.com/m/metis-4.0.3.tar.gz.522624-0.html). Due to the use of Metis, this code can be freely used for educational and research purposes by non-profit institutions and US government agencies only. The wrapper itself is provided as free software under MIT License in the hope it is useful.
+
+Note that this software is provided "as is" with absolutely no warranty. Use at your own risk.
+
+
 ## Benchmark Example
 
 In our experience MUMPS is considerably faster than Julia's backslash both in  solving real or complex systems. It also seems to consume less memory. Another benefit is that once the factorization is generated it can be applied to multiple right-hand sides. Here are results of two benchmarks ran on a MacBookPro with 2.6 GHz Intel Core i7 Processor and 16 GB RAM.
@@ -42,11 +49,6 @@ This package was tested on Mac and Ubuntu only. Here, open a terminal navigate t
 **ToDo: Make MUMPS available from Julia's package manager! **
 
 
-## Copyright
-
-Please make sure you have read and understood the licenses of [MUMPS  4.10.0](http://graal.ens-lyon.fr/MUMPS/index.php?page=dwnld)  and [Metis (4.0.3)](http://www.filewatcher.com/m/metis-4.0.3.tar.gz.522624-0.html). We have included versions in the src directory. The wrapper itself is provided as free software under MIT License in the hope it is useful.
-
-Note that this software is provided "as is" with absolutely no warranty. Use at your own risk.
 
 
 
