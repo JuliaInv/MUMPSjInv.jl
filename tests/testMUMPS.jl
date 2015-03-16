@@ -1,0 +1,5 @@
+println("test MUMPS")
+include("testDivGrad.jl")
+include("testTwoSystem.jl")
+include("testTwoSystemParallel.jl")
+println("Done!")

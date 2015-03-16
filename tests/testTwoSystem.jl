@@ -5,8 +5,8 @@ using Base.Test
 include("getDivGrad.jl");
 
 
-A  = getDivGrad(54,54,54);
-A2 = getDivGrad(64,64,64);
+A  = getDivGrad(24,23,25);
+A2 = getDivGrad(34,32,36);
 
 n  = size(A,1);
 n2 = size(A2,1);

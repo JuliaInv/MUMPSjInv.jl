@@ -1,5 +1,5 @@
 
-   
+
 
 module mumps_mod
 
@@ -12,7 +12,7 @@ module mumps_mod
 
    !logical,private:: mumps_initialized = .false.
 
-   
+
 contains
 
 !---------------------------------------------------------------
@@ -22,7 +22,7 @@ subroutine init( mumps_par, sym )
 implicit none
 
 TYPE (DMUMPS_STRUC),intent(inout):: mumps_par
-integer(kind=8),intent(in):: sym  ! =0 unsymmetric, =1 symm. pos def, =2 general symm.
+integer(kind=8),intent(in):: sym  ! =0 unsymmetric, =1 symm. pos def, =2 general symm.x
 
    !mumps_par%COMM = MPI_COMM_WORLD
    mumps_par%SYM = sym  ! =0 unsymmetric, =1 symm. pos def, =2 general symm.
@@ -37,7 +37,7 @@ integer(kind=8),intent(in):: sym  ! =0 unsymmetric, =1 symm. pos def, =2 general
    !end if
 
    !mumps_initialized = .true.
-   
+
 return
 end subroutine init
 
@@ -68,7 +68,7 @@ if (mumps_par%SYM == 0) then  ! not symmetric matrix
       ierr = -13  ! allocation error
       return
    end if
-   
+
 
    do i = 1, n
       mumps_par%JCN( iA(i) : iA(i+1)-1 )  =  i
@@ -89,15 +89,15 @@ else  ! symmetric matrix
 
    ind = 0
    do i = 1, n
-   
+
       j1 = iA(i)
       j2 = iA(i+1) - 1
-      do j = j1, j2 
+      do j = j1, j2
          jcol = jA(j)
 
          if (i >= jcol) then
             ind = ind + 1
-            mumps_par%A(ind) = A(j) 
+            mumps_par%A(ind) = A(j)
             mumps_par%JCN(ind) = jcol
             mumps_par%IRN(ind) = i
          end if
@@ -115,21 +115,24 @@ end subroutine convert_to_mumps_format
 
 !---------------------------------------------------------------
 
-subroutine factor_matrix( mumps_par, ierr )
+subroutine factor_matrix( mumps_par, ooc, ierr )
 
 implicit none
 
 TYPE (DMUMPS_STRUC),intent(inout):: mumps_par
+integer(kind=8),intent(in):: ooc ! = 0 in-core factorization, = 1 out-of-core factorization
 integer(kind=8),intent(out):: ierr
 
-!mumps_par%icntl(2) = 6  ! output stream for diagnostics
-mumps_par%icntl(4) = 0 ! 1  ! amount of output
+mumps_par%icntl(2) = -1  ! output stream for diagnostics
+mumps_par%icntl(4) = -1 ! 1  ! amount of output
 
 
 mumps_par%icntl(2) = 0 ! ui_out  ! output stream for diagnostic printing
 mumps_par%icntl(3) = 0 ! ui_out  ! output stream for global information
 
 !mumps_par%icntl(14) = 40 ! % increase in working space
+
+mumps_par%icntl(22) = ooc ! out-of-core factorization
 
 !mumps_par%icntl(11) = 0 ! return statistics
 ! mumps_par%icntl(7) = 5  ! ordering type
@@ -143,10 +146,10 @@ mumps_factorization: do
 
    mumps_par%JOB = 2  !  factorization
    CALL DMUMPS(mumps_par)
-   
+
    ierr = mumps_par%INFOG(1)
 
-   
+
    if ( mumps_par%INFOG(1) == -9 .or. mumps_par%INFOG(1) == -8 ) then
       ! Main internal real/complex workarray S too small.
       mumps_par%icntl(14) = mumps_par%icntl(14) + 10
@@ -156,38 +159,10 @@ mumps_factorization: do
                    /'increased to',i4)
       end if
 
-   !else if (mumps_par%INFOG(1) == -13) then
-   !   if ( mumps_par%MYID == 0 ) then
-   !      write(*,40)
-   !      40 format(/'MUMPS memory allocation error.'/)         
-   !   end if
-   !   stop
-
-   !else if (mumps_par%INFOG(1) == -10) then
-   !   if ( mumps_par%MYID == 0 ) then
-   !      write(*,45)
-   !      45 format(/'MUMPS ERROR: Numerically singular matrix.'/)         
-   !   end if
-   !   stop
-
-   !else if (mumps_par%INFOG(1) == -40) then
-   !   if ( mumps_par%MYID == 0 ) then
-   !      write(*,46)
-   !      46 format(/'MUMPS ERROR: matrix is not positive definite.'/)         
-   !   end if
-   !   stop
-
-   !else if ( mumps_par%INFOG(1) < 0 ) then
-   !   if ( mumps_par%MYID == 0 ) then
-   !      write(*,20) mumps_par%INFOG(1), mumps_par%INFOG(2)
-   !      20 format(/'ERROR occured in MUMPS!',/,'INFOG(1), INFOG(2) ', 2i6,/)
-   !   end if
-   !   stop
-
    else
       exit mumps_factorization ! factorization successful
    end if
-   
+
 end do mumps_factorization
 
 
@@ -203,7 +178,7 @@ return
 end subroutine factor_matrix
 
 !--------------------------------------------------------------
-   
+
 subroutine solve( mumps_par, nrhs, rhs, x, transpose )
 ! Solve A*x = rhs
 
@@ -232,7 +207,7 @@ logical,intent(in):: transpose  ! if .true. take the transpose
 
    mumps_par%JOB = 3  ! Solve the system.
    CALL DMUMPS(mumps_par)
-   ! At this point mumps_par%RHS (rhs) contains the solution. 
+   ! At this point mumps_par%RHS (rhs) contains the solution.
 
 
 return

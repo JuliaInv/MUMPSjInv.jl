@@ -1,9 +1,9 @@
 
-  
+
 !-------------------------------------------------
-   
-function factor_mumps_cmplx( n, sym, A,jA,iA, ierr )  result(pm_out)
-!DIR$ ATTRIBUTES DLLEXPORT :: factor_mumps_cmplx   
+
+function factor_mumps_cmplx( n, sym, ooc, A, jA, iA, ierr )  result(pm_out)
+!DIR$ ATTRIBUTES DLLEXPORT :: factor_mumps_cmplx
 !DIR$ ATTRIBUTES ALIAS: 'factor_mumps_cmplx_':: factor_mumps_cmplx
 
 use mumps_cmplx_mod, only: init, convert_to_mumps_format, factor_matrix, destroy
@@ -14,6 +14,7 @@ INCLUDE 'zmumps_struc.h'
 integer(kind=8):: pm_out   ! mumps pointer
 integer(kind=8),intent(in):: n  ! # of rows in A
 integer(kind=8),intent(in):: sym  ! =0 unsymmetric, =1 symm. pos def, =2 general symm.
+integer(kind=8),intent(in):: ooc  ! = 0 in-core factorization, = 1 out-of-core factorization
 complex(kind=8),intent(in):: A(*)
 integer(kind=8),intent(in):: jA(*), iA(n+1)
 
@@ -32,7 +33,7 @@ call init( mumps_par, sym)
 call convert_to_mumps_format(mumps_par, n, A,jA,iA, ierr )
 if (ierr < 0) return  ! allocation error
 
-call factor_matrix(mumps_par, ierr)
+call factor_matrix(mumps_par, ooc, ierr)
 
 if ( ierr < 0 ) then
    ! Error in factorization.
@@ -44,9 +45,9 @@ end if
 
 return
 end  function factor_mumps_cmplx
-   
+
 !-------------------------------------------------
-   
+
 subroutine solve_mumps_cmplx( pm_in, nrhs, rhs, x, transpose )
 ! Solve A*x = rhs
 
@@ -72,13 +73,13 @@ call solve(mumps_par, nrhs, rhs, x, (transpose==1) )
 
 return
 end subroutine solve_mumps_cmplx
-   
+
 !-------------------------------------------------
 
 subroutine destroy_mumps_cmplx( pm_in )
 !  Destroy the instance (deallocate internal data structures)
 
-!DIR$ ATTRIBUTES DLLEXPORT :: destroy_mumps_cmplx   
+!DIR$ ATTRIBUTES DLLEXPORT :: destroy_mumps_cmplx
 !DIR$ ATTRIBUTES ALIAS: 'destroy_mumps_cmplx_':: destroy_mumps_cmplx
 use mumps_cmplx_mod, only: destroy
 
@@ -94,6 +95,6 @@ call destroy(mumps_par)
 
 return
 end subroutine destroy_mumps_cmplx
-   
+
 !-------------------------------------------------
-   
+

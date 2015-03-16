@@ -3,7 +3,7 @@ using MUMPS
 using Base.Test
 include("getDivGrad.jl");
 
-A = getDivGrad(32,32,32);
+A = getDivGrad(32,32,16);
 n = size(A,1);
 
 # REAL: test for single rhs
@@ -25,6 +25,7 @@ err = zeros(nrhs)
 for i=1:nrhs
         err[i] =  norm(A*x[:,i]-rhs[:,i]) / norm(rhs[:,i]);
 end
+@test eltype(x) == Float64
 @test maximum(err) < 1e-14
 
 # COMPLEX: test for multiple rhs
@@ -37,6 +38,7 @@ rhs = randn(n) + im*randn(n);
 x = solveMUMPS(A,rhs,[],1);
 
 err=  norm(A*x-rhs) / norm(rhs);
+@test eltype(x) == Complex128
 @test err < 1e-14
 
 # COMPLEX : test for multiple rhs
@@ -45,11 +47,11 @@ nrhs = 10;
 rhs = randn(n,nrhs) + im*randn(n,nrhs);
 
 x = solveMUMPS(A,rhs,[],2);
-
 err = zeros(nrhs)
 for i=1:nrhs
         err[i] =  norm(A*x[:,i]-rhs[:,i]) / norm(rhs[:,i]);
 end
+@test eltype(x) == Complex128
 @test maximum(err) < 1e-14
 
 println("DONE!")
