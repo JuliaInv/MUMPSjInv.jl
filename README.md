@@ -18,26 +18,24 @@ We are solving linear systems arising from discretization of Poisson's equation 
 
 | Grid size | MUMPS (sec) | Julia (sec) | Speedup|
 | --------- | ------------|-------------|--------|
-| 8^3  		|  0.002      |  0.003      | 1.3 	 |
-| 16^3 		|  0.025      | 0.043       | 1.2 	 |
-| 24^3 		|  0.161      | 0.286       | 1.7 	 |
-| 32^3 		|  0.545      | 1.747       | 2.9 	 |
-| 48^3 		|  3.515      | 20.738      | 5.5 	 |
-| 64^3 		|  13.286     | 125.902     | 7.2 	 |
+| 8^3  		|   0.0013    | 0.0030      | 2.243  |
+| 16^3 		|   0.0197    | 0.0214      | 1.080  |
+| 24^3 		|   0.1283    | 0.1112      | 0.866  |
+| 32^3 		|   0.4160    | 0.3997      | 0.960  |
+| 48^3 		|   2.3682    | 3.4196      | 1.443  |
+| 64^3 		|   10.9231   | 16.1198     | 1.475  |
 
 ### Solving a complex system
 As above, we obtain  discretizations of Poisson's equation for different grid sizes,  add an imaginary identity matrix and solve for one complex random right hand side. We compare the runtime for MUMPS solver and the backslash. 
 
 | Grid size | MUMPS (sec) | Julia (sec) | Speedup|
 |----------:|------------:|------------:|-------:|
-| 8^3  		|0.004        | 0.065       | 15.8   |
-| 16^3 		|0.044        | 0.073       | 1.7    |
-| 24^3 		|0.354        | 0.629       | 1.8    |
-| 32^3 		|1.418        | 4.106       | 2.9    |
-| 48^3 		|12.150       |  53.757     | 4.4    |
-| 64^3 		|59.465       |  MEM_EX     |   	 |
-
-MEM_EX: On the 64^3 grid computation was interrupted, memory was insufficient and Julia began swapping.
+| 8^3  		| 0.002       |   0.004     | 1.829  |
+| 16^3 		| 0.047       |   0.087     | 1.867  |
+| 24^3 		| 0.319       |   0.415     | 1.299  |
+| 32^3 		| 1.312       |   2.502     | 1.907  |
+| 48^3 		|11.091       |  24.057     | 2.168  |
+| 64^3 		|58.472       | 157.315     | 2.690  |
 
 Some more tests are provided in MUMPS/tests. 
 
