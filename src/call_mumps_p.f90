@@ -11,14 +11,14 @@ implicit none
 
 INCLUDE 'dmumps_struc.h'
 
-integer(kind=8):: pm_out   ! mumps pointer
-integer(kind=8),intent(in):: n  ! # of rows in A
-integer(kind=8),intent(in):: sym  ! =0 unsymmetric, =1 symm. pos def, =2 general symm.
-integer(kind=8),intent(in):: ooc  ! = 0 in-core factorization, = 1 out-of-core factorization
+integer:: pm_out   ! mumps pointer
+integer,intent(in):: n  ! # of rows in A
+integer,intent(in):: sym  ! =0 unsymmetric, =1 symm. pos def, =2 general symm.
+integer,intent(in):: ooc  ! = 0 in-core factorization, = 1 out-of-core factorization
 real(kind=8),intent(in):: A(*)
-integer(kind=8),intent(in):: jA(*), iA(n+1)
+integer,intent(in):: jA(*), iA(n+1)
 
-integer(kind=8),intent(out):: ierr
+integer,intent(out):: ierr
 ! integer,intent(out):: ierr  ! =0 no error, < 0 error (memory, singular, etc.)
 
 TYPE(DMUMPS_STRUC),pointer:: pmumps_par
@@ -59,11 +59,11 @@ implicit none
 
 INCLUDE 'dmumps_struc.h'
 
-integer(kind=8),intent(in):: pm_in  ! mumps pointer
-integer(kind=8),intent(in):: nrhs  ! # of right-hand-sides
+integer,intent(in):: pm_in  ! mumps pointer
+integer,intent(in):: nrhs  ! # of right-hand-sides
 real(kind=8),intent(in):: rhs(*)   ! right-hand-side
 real(kind=8),intent(out):: x(*)    ! solution
-integer(kind=8),intent(in):: transpose   ! =1 for transpose
+integer,intent(in):: transpose   ! =1 for transpose
 
 TYPE(DMUMPS_STRUC):: mumps_par
 pointer ( pm, mumps_par )
@@ -87,29 +87,26 @@ implicit none
 
 INCLUDE 'dmumps_struc.h'
 
-integer(kind=8),intent(in):: pm_in  ! mumps pointer
-integer(kind=8),intent(in):: nzrhs,nrhs  ! total # of non-zeros across all rhs,# of right-hand-sides
-integer(kind=8),intent(in):: irhsrow(*), irhscolptr(*)  !Right hand side indexing pointers
-real(kind=8),intent(in):: rhsval(*)   ! right-hand-side
+integer,intent(in):: pm_in  ! mumps pointer
+integer,intent(in):: nzrhs,nrhs  ! total # of non-zeros across all rhs,# of right-hand-sides
+integer,intent(in),target:: irhsrow(*), irhscolptr(*)  !Right hand side indexing pointers
+real(kind=8),intent(in),target:: rhsval(*)   ! right-hand-side
 real(kind=8),intent(out):: x(*)    ! solution
-integer(kind=8),intent(in):: transpose   ! =1 for transpose
+integer,intent(in):: transpose   ! =1 for transpose
 
 TYPE(DMUMPS_STRUC):: mumps_par
 pointer ( pm, mumps_par )
 pm = pm_in
 
 ! Setup sparse rhs
-allocate( mumps_par%RHS_SPARSE(nzrhs),mumps_par%IRHS_SPARSE(nzrhs),mumps_par%IRHS_PTR(nrhs+1) )
 mumps_par%NZ_RHS      = nzrhs
 mumps_par%NRHS        = nrhs
 mumps_par%LRHS        = mumps_par%N  ! size of system
-mumps_par%RHS_SPARSE  = rhsval(1:nzrhs)
-mumps_par%IRHS_SPARSE = irhsrow(1:nzrhs)
-mumps_par%IRHS_PTR    = irhscolptr(1:nrhs+1)
+mumps_par%RHS_SPARSE  => rhsval(1:nzrhs)
+mumps_par%IRHS_SPARSE => irhsrow(1:nzrhs)
+mumps_par%IRHS_PTR    => irhscolptr(1:nrhs+1)
 
 call solve_sparse_rhs(mumps_par, nrhs, x, (transpose==1) )
-
-deallocate( mumps_par%IRHS_PTR, mumps_par%IRHS_SPARSE, mumps_par%RHS_SPARSE )
 
 return
 end subroutine solve_mumps_sparse_rhs
@@ -126,7 +123,7 @@ use mumps_mod, only: destroy
 implicit none
 INCLUDE 'dmumps_struc.h'
 
-integer(kind=8),intent(in):: pm_in  ! mumps pointer
+integer,intent(in):: pm_in  ! mumps pointer
 TYPE(DMUMPS_STRUC):: mumps_par
 pointer ( pm, mumps_par )
 pm = pm_in

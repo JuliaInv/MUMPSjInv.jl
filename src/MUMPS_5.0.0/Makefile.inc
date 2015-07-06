@@ -60,10 +60,10 @@ CDEFS   = -DAdd_
 #OPTF    = -O3 -xHost -vec-report0 -assume buffered_io -warn noalignments -Dintel_ -DALLOW_NON_INIT 
 #OPTF    = -O3 -vec-report0 -assume buffered_io -warn noalignments -Dintel_ -DALLOW_NON_INIT 
 
-OPTF    = -O2 -fPIC
+OPTF    = -O3 -fPIC -fdefault-integer-8
 
-OPTL    = -O2   $(SCALAP) 
-OPTC    = -O1 -fPIC
+OPTL    = -O3   $(SCALAP) 
+OPTC    = -O3 -fPIC -DINTSIZE64
 #End Optimized options
 INCS = $(INCSEQ)
 LIBS = $(LIBSEQ)
