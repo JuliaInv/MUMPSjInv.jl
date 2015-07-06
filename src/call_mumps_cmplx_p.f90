@@ -76,6 +76,46 @@ end subroutine solve_mumps_cmplx
 
 !-------------------------------------------------
 
+subroutine solve_mumps_cmplx_sparse_rhs( pm_in, nzrhs, nrhs, rhsval, irhsrow, irhscolptr, x, transpose )
+! Solve A*x = rhs where rhs is input as a CSC sparse matrix. MUMPS automatically chooses whether or
+! not to exploit rhs sparsity in the solution procedure.
+! See pg. 36 of MUMPS 5.0.0 users' guide for description of sparse rhs input.
+
+use mumps_cmplx_mod, only: solve_sparse_rhs
+
+implicit none
+
+INCLUDE 'zmumps_struc.h'
+
+integer(kind=8),intent(in):: pm_in  ! mumps pointer
+integer(kind=8),intent(in):: nzrhs,nrhs  ! total # of non-zeros across all rhs,# of right-hand-sides
+integer(kind=8),intent(in):: irhsrow(*), irhscolptr(*)  !Right hand side indexing pointers
+complex(kind=8),intent(in):: rhsval(*)   ! right-hand-side values
+complex(kind=8),intent(out):: x(*)    ! solution
+integer(kind=8),intent(in):: transpose   ! =1 for transpose
+
+TYPE(ZMUMPS_STRUC):: mumps_par
+pointer ( pm, mumps_par )
+pm = pm_in
+
+! Setup sparse rhs
+allocate( mumps_par%RHS_SPARSE(nzrhs),mumps_par%IRHS_SPARSE(nzrhs),mumps_par%IRHS_PTR(nrhs+1) )
+mumps_par%NZ_RHS      = nzrhs
+mumps_par%NRHS        = nrhs
+mumps_par%LRHS        = mumps_par%N  ! size of system
+mumps_par%RHS_SPARSE  = rhsval(1:nzrhs)
+mumps_par%IRHS_SPARSE = irhsrow(1:nzrhs)
+mumps_par%IRHS_PTR    = irhscolptr(1:nrhs+1)
+
+call solve_sparse_rhs(mumps_par, nrhs, x, (transpose==1) )
+
+deallocate( mumps_par%IRHS_PTR, mumps_par%IRHS_SPARSE, mumps_par%RHS_SPARSE )
+
+return
+end subroutine solve_mumps_cmplx_sparse_rhs
+
+!-------------------------------------------------
+
 subroutine destroy_mumps_cmplx( pm_in )
 !  Destroy the instance (deallocate internal data structures)
 

@@ -8,6 +8,8 @@ module MUMPS
 		time::Float64  # factorization time
 	end
 	
+	arrayOrSparseCSC = Union{Array,SparseMatrixCSC}
+	
 	include("MUMPSfuncs.jl")
 	
 	export solveMUMPS, factorMUMPS, applyMUMPS,destroyMUMPS, MUMPSfactorization

@@ -1,0 +1,8 @@
+/home/patrick/Julia/v0.4/MUMPS.jl/src/metis-5.1.0/installed-libs/include/metis.h
+/home/patrick/Julia/v0.4/MUMPS.jl/src/metis-5.1.0/installed-libs/lib/libmetis.a
+/home/patrick/Julia/v0.4/MUMPS.jl/src/metis-5.1.0/installed-libs/bin/gpmetis
+/home/patrick/Julia/v0.4/MUMPS.jl/src/metis-5.1.0/installed-libs/bin/ndmetis
+/home/patrick/Julia/v0.4/MUMPS.jl/src/metis-5.1.0/installed-libs/bin/mpmetis
+/home/patrick/Julia/v0.4/MUMPS.jl/src/metis-5.1.0/installed-libs/bin/m2gmetis
+/home/patrick/Julia/v0.4/MUMPS.jl/src/metis-5.1.0/installed-libs/bin/graphchk
+/home/patrick/Julia/v0.4/MUMPS.jl/src/metis-5.1.0/installed-libs/bin/cmpfillin

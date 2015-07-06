@@ -215,6 +215,37 @@ end subroutine solve
 
 !--------------------------------------------------------------
 
+subroutine solve_sparse_rhs( mumps_par, nrhs, x, transpose )
+! Solve A*x = rhs
+
+implicit none
+
+TYPE (DMUMPS_STRUC),intent(inout):: mumps_par
+integer(kind=8),intent(in):: nrhs   ! # of right-hand-sides
+real(kind=8),intent(out),target:: x(nrhs * mumps_par%N)  ! solution
+logical,intent(in):: transpose  ! if .true. take the transpose
+
+   mumps_par%RHS       => x
+   mumps_par%icntl(20) = 1 !Use sparse rhs and let MUMPS choose whether
+                           !or not to exploit it during solution
+
+   if (transpose) then
+      mumps_par%icntl(9) = 0  ! for solving A'x = b
+   else
+      mumps_par%icntl(9) = 1  ! for solving Ax = b
+   end if
+
+
+   mumps_par%JOB = 3  ! Solve the system.
+   CALL DMUMPS(mumps_par)
+   ! At this point mumps_par%RHS (rhs) contains the solution.
+
+
+return
+end subroutine solve_sparse_rhs
+
+!--------------------------------------------------------------
+
 subroutine destroy(mumps_par)
 
 implicit none

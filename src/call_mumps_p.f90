@@ -76,6 +76,46 @@ end subroutine solve_mumps
 
 !-------------------------------------------------
 
+subroutine solve_mumps_sparse_rhs( pm_in, nzrhs, nrhs, rhsval, irhsrow, irhscolptr, x, transpose )
+! Solve A*x = rhs
+
+!DIR$ ATTRIBUTES DLLEXPORT :: solve_mumps
+!DIR$ ATTRIBUTES ALIAS: 'solve_mumps_':: solve_mumps
+use mumps_mod, only: solve_sparse_rhs
+
+implicit none
+
+INCLUDE 'dmumps_struc.h'
+
+integer(kind=8),intent(in):: pm_in  ! mumps pointer
+integer(kind=8),intent(in):: nzrhs,nrhs  ! total # of non-zeros across all rhs,# of right-hand-sides
+integer(kind=8),intent(in):: irhsrow(*), irhscolptr(*)  !Right hand side indexing pointers
+real(kind=8),intent(in):: rhsval(*)   ! right-hand-side
+real(kind=8),intent(out):: x(*)    ! solution
+integer(kind=8),intent(in):: transpose   ! =1 for transpose
+
+TYPE(DMUMPS_STRUC):: mumps_par
+pointer ( pm, mumps_par )
+pm = pm_in
+
+! Setup sparse rhs
+allocate( mumps_par%RHS_SPARSE(nzrhs),mumps_par%IRHS_SPARSE(nzrhs),mumps_par%IRHS_PTR(nrhs+1) )
+mumps_par%NZ_RHS      = nzrhs
+mumps_par%NRHS        = nrhs
+mumps_par%LRHS        = mumps_par%N  ! size of system
+mumps_par%RHS_SPARSE  = rhsval(1:nzrhs)
+mumps_par%IRHS_SPARSE = irhsrow(1:nzrhs)
+mumps_par%IRHS_PTR    = irhscolptr(1:nrhs+1)
+
+call solve_sparse_rhs(mumps_par, nrhs, x, (transpose==1) )
+
+deallocate( mumps_par%IRHS_PTR, mumps_par%IRHS_SPARSE, mumps_par%RHS_SPARSE )
+
+return
+end subroutine solve_mumps_sparse_rhs
+
+!-------------------------------------------------
+
 subroutine destroy_mumps( pm_in )
 !  Destroy the instance (deallocate internal data structures)
 
