@@ -5,10 +5,6 @@ MUMPS
 mtest
 graphchk
 kmetis
-src/metis-4.0.3/mesh2dual
-src/metis-4.0.3/mesh2nodal
-src/metis-4.0.3/oemetis
-src/metis-4.0.3/onmetis
-src/metis-4.0.3/partdmesh
-src/metis-4.0.3/partnmesh
-src/metis-4.0.3/pmetis
+src/metis-5.1.0/build
+src/metis-5.1.0/installed-libs
+src/MUMPS_5.0.0/examples
