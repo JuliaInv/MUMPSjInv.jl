@@ -33,43 +33,41 @@ function solveMUMPS(A::SparseMatrixCSC, rhs::arrayOrSparseCSC, x::Array=[], sym=
 	
 	# free memory
 	destroyMUMPS(factor)
-   return x
+        return x
 end
 
 function factorMUMPS(A::SparseMatrixCSC{Complex128,Int},sym=0,ooc=0)
-	# Generate LU-factorization of complex matrix A, 'sym' can be: 0=unsymmetric, 1=symm. pos def, 2=general symmetric
+    # Generate LU-factorization of complex matrix A, 'sym' can be: 0=unsymmetric, 1=symm. pos def, 2=general symmetric
     if size(A,1) != size(A,2)
-		error("factorMUMPS: Matrix must be square!")
-  	end
-	n  = size(A,1);
- 	mumpsstat = [0];
-	tic()
+	error("factorMUMPS: Matrix must be square!")
+    end
+    n  = size(A,1);
+    mumpsstat = [0];
+    tic()
     p  = ccall( (:factor_mumps_cmplx_, "/home/patrick/Julia/v0.4/MUMPS.jl/lib/MUMPS"),
     		 Int64, ( Ptr{Int64}, Ptr{Int64}, Ptr{Int64}, Ptr{Complex128}, Ptr{Int64}, Ptr{Int64}, Ptr{Int64}),
-             &n, &sym, &ooc,  convert(Ptr{Complex128}, pointer(A.nzval)), A.rowval, A.colptr, mumpsstat);
+                 &n, &sym, &ooc,  convert(Ptr{Complex128}, pointer(A.nzval)), A.rowval, A.colptr, mumpsstat);
     checkMUMPSerror(mumpsstat);
-	facTime = toq()
-	factor = MUMPSfactorization(p,myid(),n,false,facTime);
-	# finalizer(factor,destroyMUMPS)
-	return factor
+    facTime = toq()
+    factor = MUMPSfactorization(p,myid(),n,false,facTime);
+    return factor
 end
 
 function factorMUMPS(A::SparseMatrixCSC{Float64,Int},sym=0,ooc=0)
-	# Generate LU-factorization of a real matrix A, 'sym' can be: 0=unsymmetric, 1=symm. pos def, 2=general symmetric
+    # Generate LU-factorization of a real matrix A, 'sym' can be: 0=unsymmetric, 1=symm. pos def, 2=general symmetric
     if size(A,1) != size(A,2)
 		error("factorMUMPS: Matrix must be square!")
-  	end
-	n  = size(A,1);
- 	mumpsstat = [0];
-	tic()
-	p  = ccall( (:factor_mumps_, "/home/patrick/Julia/v0.4/MUMPS.jl/lib/MUMPS"),
-		 Int64, ( Ptr{Int64}, Ptr{Int64}, Ptr{Int64}, Ptr{Float64}, Ptr{Int64}, Ptr{Int64}, Ptr{Int64}),
-         &n, &sym, &ooc, A.nzval, A.rowval, A.colptr, mumpsstat);
+    end
+    n  = size(A,1);
+    mumpsstat = [0];
+    tic()
+    p  = ccall( (:factor_mumps_, "/home/patrick/Julia/v0.4/MUMPS.jl/lib/MUMPS"),
+ 	       Int64, ( Ptr{Int64}, Ptr{Int64}, Ptr{Int64}, Ptr{Float64}, Ptr{Int64}, Ptr{Int64}, Ptr{Int64}),
+               &n, &sym, &ooc, A.nzval, A.rowval, A.colptr, mumpsstat);
     checkMUMPSerror(mumpsstat);
-	facTime = toq()
-	factor = MUMPSfactorization(p,myid(),n,true,facTime);
-	# finalizer(factor,destroyMUMPS)
-	return factor
+    facTime = toq()
+    factor = MUMPSfactorization(p,myid(),n,true,facTime);
+    return factor
 end
 
 
@@ -138,9 +136,9 @@ function applyMUMPS(factor::MUMPSfactorization,rhs::SparseMatrixCSC,x::Array=[],
 		return remotecall_fetch(factor.worker,applyMUMPS,factor,rhs,x,tr)
 	end
 	
-	 n     = size(rhs,1)
-	 nrhs  = size(rhs,2)
-	 nzrhs = nnz(rhs)
+	n     = size(rhs,1)
+	nrhs  = size(rhs,2)
+	nzrhs = nnz(rhs)
 	
 	# check size of rhs, allocate space for x
 	if n != factor.n;  error("applyMUMPS: wrong size of rhs, size(A)=$(factor.n), size(rhs)=$n x $nrhs."); end
@@ -150,7 +148,6 @@ function applyMUMPS(factor::MUMPSfactorization,rhs::SparseMatrixCSC,x::Array=[],
 	if factor.real && !isreal(rhs)
 		error("applyMUMPS: rhs must be real.")	
 	end
-	
 	
 	# make x complex if necessary
 	x   = factor.real ? x   : complex(x)

@@ -98,7 +98,7 @@ TYPE(ZMUMPS_STRUC):: mumps_par
 pointer ( pm, mumps_par )
 pm = pm_in
 
-! Setup sparse rhs
+! Setup sparse rhs 
 mumps_par%NZ_RHS      = nzrhs
 mumps_par%NRHS        = nrhs
 mumps_par%LRHS        = mumps_par%N  ! size of system

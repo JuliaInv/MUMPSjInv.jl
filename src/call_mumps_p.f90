@@ -77,7 +77,9 @@ end subroutine solve_mumps
 !-------------------------------------------------
 
 subroutine solve_mumps_sparse_rhs( pm_in, nzrhs, nrhs, rhsval, irhsrow, irhscolptr, x, transpose )
-! Solve A*x = rhs
+! Solve A*x = rhs where rhs is input as a CSC sparse matrix. MUMPS automatically chooses whether or
+! not to exploit rhs sparsity in the solution procedure.
+! See pg. 36 of MUMPS 5.0.0 users' guide for description of sparse rhs input.
 
 !DIR$ ATTRIBUTES DLLEXPORT :: solve_mumps
 !DIR$ ATTRIBUTES ALIAS: 'solve_mumps_':: solve_mumps

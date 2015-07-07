@@ -3,7 +3,7 @@ using Base.Test
 include("getDivGrad.jl");
 Ns   = (32,48,64)
 nrhs = (1,10,100,500)
-#rhsDensity = 0.03
+rhsDensity = 0.01
 MUMPStimeSparse =zeros(length(nrhs))
 MUMPStimeDense  =zeros(length(nrhs))
 
@@ -18,7 +18,9 @@ for i=1:length(Ns)
 	Afac1 = factorMUMPS(A,1)
 	Afac2 = factorMUMPS(A,1)
 	
-	rhsInit = complex(spdiagm((ones(n),ones(n-32),ones(n-64)),[0,32,64],n,n))
+	rhsInit = spdiagm((ones(n),ones(n-Ns[i]),ones(n-2*Ns[i])),[0,Ns[i],2*Ns[i]],n,n)
+	#rhsInit = sprandn(n,nrhs[end],rhsDensity)
+	rhsInit = complex(rhsInit)
 	for j = 1:length(nrhs)
 	  println(@sprintf("Solve with %d rhs",nrhs[j]));
 	  #rhs = sprandn(n,nrhs[j],rhsDensity)
@@ -32,7 +34,7 @@ for i=1:length(Ns)
 	  # solve using mumps with dense rhs
 	  rhs = full(rhs)
 	  tic()
-	  x2 = x1 = applyMUMPS(Afac2,rhs,[])
+	  x2 = applyMUMPS(Afac2,rhs,[])
 	  MUMPStimeDense[j]= toc();
 	  for k = 1:nrhs[j]
 	    @test norm(x1[:,k]-x2[:,k])/norm(x1[:,k]) < 1e-9
