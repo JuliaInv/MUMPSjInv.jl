@@ -22,7 +22,7 @@ subroutine init( mumps_par, sym )
 implicit none
 
 TYPE (DMUMPS_STRUC),intent(inout):: mumps_par
-integer(kind=8),intent(in):: sym  ! =0 unsymmetric, =1 symm. pos def, =2 general symm.x
+integer,intent(in):: sym  ! =0 unsymmetric, =1 symm. pos def, =2 general symm.x
 
    !mumps_par%COMM = MPI_COMM_WORLD
    mumps_par%SYM = sym  ! =0 unsymmetric, =1 symm. pos def, =2 general symm.
@@ -48,10 +48,10 @@ subroutine convert_to_mumps_format( mumps_par, n, A,jA,iA, ierr )
 implicit none
 
 TYPE (DMUMPS_STRUC),intent(inout):: mumps_par
-integer(kind=8),intent(in):: n  ! # of rows in A
+integer,intent(in):: n  ! # of rows in A
 real(kind=8),intent(in):: A(*)
-integer(kind=8),intent(in):: jA(*), iA(n+1)
-integer(kind=8),intent(out):: ierr
+integer,intent(in):: jA(*), iA(n+1)
+integer,intent(out):: ierr
 
 integer nonz, i,j, j1,j2, ind, jcol, istat
 
@@ -120,8 +120,8 @@ subroutine factor_matrix( mumps_par, ooc, ierr )
 implicit none
 
 TYPE (DMUMPS_STRUC),intent(inout):: mumps_par
-integer(kind=8),intent(in):: ooc ! = 0 in-core factorization, = 1 out-of-core factorization
-integer(kind=8),intent(out):: ierr
+integer,intent(in):: ooc ! = 0 in-core factorization, = 1 out-of-core factorization
+integer,intent(out):: ierr
 
 mumps_par%icntl(2) = -1  ! output stream for diagnostics
 mumps_par%icntl(4) = -1 ! 1  ! amount of output
@@ -185,7 +185,7 @@ subroutine solve( mumps_par, nrhs, rhs, x, transpose )
 implicit none
 
 TYPE (DMUMPS_STRUC),intent(inout):: mumps_par
-integer(kind=8),intent(in):: nrhs   ! # of right-hand-sides
+integer,intent(in):: nrhs   ! # of right-hand-sides
 real(kind=8),intent(in):: rhs(nrhs * mumps_par%N)
 real(kind=8),intent(out),target:: x(nrhs * mumps_par%N)  ! solution
 logical,intent(in):: transpose  ! if .true. take the transpose
@@ -212,6 +212,37 @@ logical,intent(in):: transpose  ! if .true. take the transpose
 
 return
 end subroutine solve
+
+!--------------------------------------------------------------
+
+subroutine solve_sparse_rhs( mumps_par, nrhs, x, transpose )
+! Solve A*x = rhs
+
+implicit none
+
+TYPE (DMUMPS_STRUC),intent(inout):: mumps_par
+integer,intent(in):: nrhs   ! # of right-hand-sides
+real(kind=8),intent(out),target:: x(nrhs * mumps_par%N)  ! solution
+logical,intent(in):: transpose  ! if .true. take the transpose
+
+   mumps_par%RHS       => x
+   mumps_par%icntl(20) = 1 !Use sparse rhs and let MUMPS choose whether
+                           !or not to exploit it during solution
+
+   if (transpose) then
+      mumps_par%icntl(9) = 0  ! for solving A'x = b
+   else
+      mumps_par%icntl(9) = 1  ! for solving Ax = b
+   end if
+
+
+   mumps_par%JOB = 3  ! Solve the system.
+   CALL DMUMPS(mumps_par)
+   ! At this point mumps_par%RHS (rhs) contains the solution.
+
+
+return
+end subroutine solve_sparse_rhs
 
 !--------------------------------------------------------------
 
