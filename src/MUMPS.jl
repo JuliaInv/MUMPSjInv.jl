@@ -1,6 +1,14 @@
 module MUMPS
-	
-	type MUMPSfactorization
+	abstract MUMPSfactorization
+	type MUMPSfactorizationReal <: MUMPSfactorization
+		ptr::Int64     # pointer to factorization
+		worker::Int64  # id of worker that holds factorization
+		n::Int64       # matrix size
+		real::Bool     # whether matrix is real or not
+		time::Float64  # factorization time
+	end
+
+	type MUMPSfactorizationComplex <: MUMPSfactorization
 		ptr::Int64     # pointer to factorization
 		worker::Int64  # id of worker that holds factorization
 		n::Int64       # matrix size
