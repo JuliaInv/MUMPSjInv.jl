@@ -20,6 +20,7 @@ module MUMPS
 	
 	include("MUMPSfuncs.jl")
 	
-	export solveMUMPS, factorMUMPS, applyMUMPS,destroyMUMPS, MUMPSfactorizationReal,MUMPSfactorizationComplex
+	export solveMUMPS, factorMUMPS, applyMUMPS,destroyMUMPS, MUMPSfactorizationReal,
+	       MUMPSfactorizationComplex,MUMPSfactorization
 	
 end
