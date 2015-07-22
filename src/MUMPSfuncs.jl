@@ -93,7 +93,7 @@ function applyMUMPS(factor::MUMPSfactorizationReal,rhs::arrayOrSparseCSCReal,
 	id1 = myid(); id2 = factor.worker
 	if id1 != id2
 		warn("Worker $id1 has no access to MUMPS factorization stored on $id2. Trying to remotecall!")
-		return remotecall_fetch(factor.worker,applyMUMPS,factor,rhs,x,tr)
+		return remotecall_fetch(factor.worker,applyMUMPS,factor,rhs,x,tr)::Array{Float64}
 	end
 	
 	 n    = size(rhs,1)
@@ -126,7 +126,7 @@ function applyMUMPS(factor::MUMPSfactorizationComplex,rhs::arrayOrSparseCSCCompl
 	id1 = myid(); id2 = factor.worker
 	if id1 != id2
 		warn("Worker $id1 has no access to MUMPS factorization stored on $id2. Trying to remotecall!")
-		return remotecall_fetch(factor.worker,applyMUMPS,factor,rhs,x,tr)
+		return remotecall_fetch(factor.worker,applyMUMPS,factor,rhs,x,tr)::Array{Complex{Float64}}
 	end
 	
 	n     = size(rhs,1)
