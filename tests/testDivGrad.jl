@@ -29,7 +29,7 @@ end
 @test maximum(err) < 1e-14
 
 # COMPLEX: test for multiple rhs
-println("Test for complex SPD matrix: one rhs");
+println("Test for complex symmetric matrix: one rhs");
 r = rand(n);
 A = A + im*spdiagm(r,0);
 
@@ -42,7 +42,7 @@ err=  norm(A*x-rhs) / norm(rhs);
 @test err < 1e-14
 
 # COMPLEX : test for multiple rhs
-println("Test for complex SPD matrix: multiple rhs");
+println("Test for complex symmetric matrix: multiple rhs");
 nrhs = 10;
 rhs = randn(n,nrhs) + im*randn(n,nrhs);
 

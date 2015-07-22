@@ -4,7 +4,6 @@ module MUMPS
 		ptr::Int64     # pointer to factorization
 		worker::Int64  # id of worker that holds factorization
 		n::Int64       # matrix size
-		real::Bool     # whether matrix is real or not
 		time::Float64  # factorization time
 	end
 
@@ -12,14 +11,15 @@ module MUMPS
 		ptr::Int64     # pointer to factorization
 		worker::Int64  # id of worker that holds factorization
 		n::Int64       # matrix size
-		real::Bool     # whether matrix is real or not
 		time::Float64  # factorization time
 	end
 	
-	arrayOrSparseCSC = Union{Array,SparseMatrixCSC}
+	arrayOrSparseCSC        = Union{Array,SparseMatrixCSC}
+	arrayOrSparseCSCReal    = Union{Array{Float64},SparseMatrixCSC{Float64,Int64}}
+	arrayOrSparseCSCComplex = Union{Array{Complex{Float64}},SparseMatrixCSC{Complex{Float64},Int64}}
 	
 	include("MUMPSfuncs.jl")
 	
-	export solveMUMPS, factorMUMPS, applyMUMPS,destroyMUMPS, MUMPSfactorization
+	export solveMUMPS, factorMUMPS, applyMUMPS,destroyMUMPS, MUMPSfactorizationReal,MUMPSfactorizationComplex
 	
 end
