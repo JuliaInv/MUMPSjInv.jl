@@ -1,3 +1,5 @@
+const MUMPSlibPath = "/home/patrick/Julia/v0.4/MUMPS.jl/lib/MUMPS"
+
 function solveMUMPS(A::SparseMatrixCSC, rhs::arrayOrSparseCSC, x::Array=[], sym=0,ooc=0,tr=0)
 
 	if isempty(x);
@@ -40,7 +42,7 @@ function factorMUMPS(A::SparseMatrixCSC{Complex128,Int},sym=0,ooc=0)
     n  = size(A,1);
     mumpsstat = [0];
     tic()
-    p  = ccall( (:factor_mumps_cmplx_, "/Users/lruthot/Projects/MUMPS.jl/lib/MUMPS"),
+    p  = ccall( (:factor_mumps_cmplx_, MUMPSlibPath),
     		 Int64, ( Ptr{Int64}, Ptr{Int64}, Ptr{Int64}, Ptr{Complex128}, Ptr{Int64}, Ptr{Int64}, Ptr{Int64}),
                  &n, &sym, &ooc,  convert(Ptr{Complex128}, pointer(A.nzval)), A.rowval, A.colptr, mumpsstat);
     checkMUMPSerror(mumpsstat);
@@ -57,7 +59,7 @@ function factorMUMPS(A::SparseMatrixCSC{Float64,Int},sym=0,ooc=0)
     n  = size(A,1);
     mumpsstat = [0];
     tic()
-    p  = ccall( (:factor_mumps_, "/Users/lruthot/Projects/MUMPS.jl/lib/MUMPS"),
+    p  = ccall( (:factor_mumps_, MUMPSlibPath),
  	       Int64, ( Ptr{Int64}, Ptr{Int64}, Ptr{Int64}, Ptr{Float64}, Ptr{Int64}, Ptr{Int64}, Ptr{Int64}),
                &n, &sym, &ooc, A.nzval, A.rowval, A.colptr, mumpsstat);
     checkMUMPSerror(mumpsstat);
@@ -107,7 +109,7 @@ function applyMUMPS!(factor::MUMPSfactorizationReal,rhs::Array{Float64},
 
 	 nrhs = size(rhs,2)
 	ptr = factor.ptr
-	ccall( (:solve_mumps_, "/Users/lruthot/Projects/MUMPS.jl/lib/MUMPS"),
+	ccall( (:solve_mumps_, MUMPSlibPath),
 				Int64, (Ptr{Int64}, Ptr{Int64}, Ptr{Float64}, Ptr{Float64}, Ptr{Int64} ),
 							&ptr,      &nrhs, 	 	rhs, x, &tr)
 	return x
@@ -117,7 +119,7 @@ function applyMUMPS!(factor::MUMPSfactorizationReal,rhs::SparseMatrixCSC{Float64
 	nrhs = size(rhs,2)
 	nzrhs = nnz(rhs)
 	ptr = factor.ptr
-	ccall( (:solve_mumps_sparse_rhs_, "/Users/lruthot/Projects/MUMPS.jl/lib/MUMPS"),
+	ccall( (:solve_mumps_sparse_rhs_, MUMPSlibPath),
               Void, (Ptr{Int64}, Ptr{Int64}, Ptr{Int64}, Ptr{Float64}, Ptr{Int64}, Ptr{Int64},
 	      	  Ptr{Float64}, Ptr{Int64} ),
 		      &ptr, &nzrhs, &nrhs, rhs.nzval, rhs.rowval, rhs.colptr, x, &tr)
@@ -130,7 +132,7 @@ function applyMUMPS!(factor::MUMPSfactorizationComplex,rhs::Array{Complex128},
 	n     = size(rhs,1)
 	nrhs  = size(rhs,2)
 	ptr = factor.ptr
-	ccall( (:solve_mumps_cmplx_, "/Users/lruthot/Projects/MUMPS.jl/lib/MUMPS"),
+	ccall( (:solve_mumps_cmplx_, MUMPSlibPath),
 				Int64, (Ptr{Int64}, Ptr{Int64}, Ptr{Complex128}, Ptr{Complex64}, Ptr{Int64} ),
 				&ptr,        &nrhs,   convert(Ptr{Complex128}, pointer(rhs)),   convert(Ptr{Complex128}, pointer(x)),   &tr)
 	return x
@@ -141,7 +143,7 @@ function applyMUMPS!(factor::MUMPSfactorizationComplex,rhs::SparseMatrixCSC{Comp
 nrhs = size(rhs,2)
 nzrhs = nnz(rhs)
 ptr = factor.ptr
-ccall( (:solve_mumps_cmplx_sparse_rhs_, "/Users/lruthot/Projects/MUMPS.jl/lib/MUMPS"),
+ccall( (:solve_mumps_cmplx_sparse_rhs_, MUMPSlibPath),
 			Void, (Ptr{Int64}, Ptr{Int64}, Ptr{Int64}, Ptr{Complex128}, Ptr{Int64}, 
 			Ptr{Int64}, Ptr{Complex64}, Ptr{Int64} ),
 			&ptr, &nzrhs,&nrhs, convert(Ptr{Complex128}, pointer(rhs.nzval)), rhs.rowval, 
@@ -158,7 +160,7 @@ function destroyMUMPS(factor::MUMPSfactorizationReal)
 		remotecall_fetch(id2,destroyMUMPS,factor)
 		return
 	end
-	ccall( (:destroy_mumps_, "/Users/lruthot/Projects/MUMPS.jl/lib/MUMPS"),
+	ccall( (:destroy_mumps_, MUMPSlibPath),
 			Int64, (Ptr{Int64}, ), &factor.ptr )
 	factor.ptr = -1
 	factor.n    = -1
@@ -173,7 +175,7 @@ function destroyMUMPS(factor::MUMPSfactorizationComplex)
 		remotecall_fetch(id2,destroyMUMPS,factor)
 		return
 	end
-	 ccall( (:destroy_mumps_cmplx_, "/Users/lruthot/Projects/MUMPS.jl/lib/MUMPS"),
+	 ccall( (:destroy_mumps_cmplx_, MUMPSlibPath),
 	 		Int64, (Ptr{Int64}, ), &factor.ptr )
 	factor.ptr = -1
 	factor.n    = -1
