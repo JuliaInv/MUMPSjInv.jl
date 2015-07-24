@@ -9,7 +9,7 @@ n = size(A,1);
 println("Test for real SPD matrix: one sparse random rhs");
 rhs = sprandn(n,1,0.05);
 
-x = solveMUMPS(A,rhs,[],1);
+x = solveMUMPS(A,rhs,1);
 err  =  norm(A*x-full(rhs)) / norm(full(rhs));
 @test err < 1e-14
 
@@ -18,7 +18,7 @@ println("Test for real SPD matrix: multiple sparse random rhs");
 nrhs = 10;
 rhs = sprandn(n,nrhs,0.03);
 
-x = solveMUMPS(A,rhs,[],1);
+x = solveMUMPS(A,rhs,1);
 
 err = zeros(nrhs)
 for i=1:nrhs
@@ -31,7 +31,7 @@ println("Test for real SPD matrix: multiple sparse delta function rhs");
 rhs = speye(n)
 rhs = rhs[:,1:nrhs]
 
-x = solveMUMPS(A,rhs,[],1);
+x = solveMUMPS(A,rhs,1);
 
 err = zeros(nrhs)
 for i=1:nrhs
@@ -47,7 +47,7 @@ A = A + im*spdiagm(r,0);
 
 rhs = sprandn(n,1,0.03) + im*sprandn(n,1,0.03);
 
-x = solveMUMPS(A,rhs,[],2);
+x = solveMUMPS(A,rhs,2);
 
 err=  norm(A*x-full(rhs)) / norm(full(rhs))
 @test eltype(x) == Complex128
@@ -58,7 +58,7 @@ println("Test for complex SPD matrix: multiple sparse random rhs");
 nrhs = 10;
 rhs = sprandn(n,nrhs,0.03) + im*sprandn(n,nrhs,0.03);
 
-x = solveMUMPS(A,rhs,[],2);
+x = solveMUMPS(A,rhs,2);
 err = zeros(nrhs)
 for i=1:nrhs
         err[i] =  norm(A*x[:,i]-full(rhs[:,i])) / norm(full(rhs[:,i]));
