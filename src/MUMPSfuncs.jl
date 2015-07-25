@@ -1,13 +1,13 @@
 const MUMPSlibPath = "/home/patrick/Julia/v0.4/MUMPS.jl/lib/MUMPS"
 
-function solveMUMPS{T1,T2}(A::SparseMatrixCSC{T1}, rhs::AbstractArray{T2}, sym=0,ooc=0,tr=0)
+function solveMUMPS{T1,T2}(A::SparseMatrixCSC{T1}, rhs::AbstractArray{T2}, sym::Int=0,ooc::Int=0,tr::Int=0)
 
 	x = zeros(promote_type(T1,T2),size(rhs))
 
 	return solveMUMPS!(A,rhs,x,sym,ooc,tr)
 end
 
-function solveMUMPS!(A::SparseMatrixCSC, rhs::AbstractArray, x::Array, sym=0,ooc=0,tr=0)
+function solveMUMPS!(A::SparseMatrixCSC, rhs::AbstractArray, x::Array, sym::Int=0,ooc::Int=0,tr::Int=0)
 
 # factorization
 factor = factorMUMPS(A,sym,ooc)
@@ -20,7 +20,7 @@ destroyMUMPS(factor)
 return x
 end
 
-function factorMUMPS(A::SparseMatrixCSC{Complex128},sym=0,ooc=0)
+function factorMUMPS(A::SparseMatrixCSC{Complex128},sym::Int=0,ooc::Int=0)
     # Generate LU-factorization of complex matrix A, 'sym' can be: 0=unsymmetric, 1=symm. pos def, 2=general symmetric
     if size(A,1) != size(A,2)
 	error("factorMUMPS: Matrix must be square!")
@@ -37,7 +37,7 @@ function factorMUMPS(A::SparseMatrixCSC{Complex128},sym=0,ooc=0)
     return factor
 end
 
-function factorMUMPS(A::SparseMatrixCSC{Float64},sym=0,ooc=0)
+function factorMUMPS(A::SparseMatrixCSC{Float64},sym::Int=0,ooc::Int=0)
     # Generate LU-factorization of a real matrix A, 'sym' can be: 0=unsymmetric, 1=symm. pos def, 2=general symmetric
     if size(A,1) != size(A,2)
 		error("factorMUMPS: Matrix must be square!")
@@ -71,7 +71,7 @@ function checkMUMPSerror(mumpsstat)
 	end
 end
 
-function applyMUMPS{T1,T2,N}(factor::MUMPSfactorization{T1},rhs::AbstractArray{T2,N},x::Array=zeros(promote_type(T1,T2),size(rhs)),tr=0)
+function applyMUMPS{T1,T2,N}(factor::MUMPSfactorization{T1},rhs::AbstractArray{T2,N},x::Array=zeros(promote_type(T1,T2),size(rhs)),tr::Int=0)
 
 	id1 = myid(); id2 = factor.worker
 	if id1 != id2
@@ -91,7 +91,7 @@ function applyMUMPS{T1,T2,N}(factor::MUMPSfactorization{T1},rhs::AbstractArray{T
 end
 
 function applyMUMPS!(factor::MUMPSfactorization{Float64},rhs::Array{Float64},
-                      x::Array{Float64},tr=0)
+                      x::Array{Float64},tr::Int=0)
 
 	 nrhs = size(rhs,2)
 	ptr = factor.ptr
@@ -101,7 +101,7 @@ function applyMUMPS!(factor::MUMPSfactorization{Float64},rhs::Array{Float64},
 	return x
 end
 
-function applyMUMPS!(factor::MUMPSfactorization{Float64},rhs::SparseMatrixCSC{Float64}, x::Array{Float64,2},tr=0)
+function applyMUMPS!(factor::MUMPSfactorization{Float64},rhs::SparseMatrixCSC{Float64}, x::Array{Float64,2},tr::Int=0)
 	nrhs = size(rhs,2)
 	nzrhs = nnz(rhs)
 	ptr = factor.ptr
@@ -114,7 +114,7 @@ function applyMUMPS!(factor::MUMPSfactorization{Float64},rhs::SparseMatrixCSC{Fl
 end
 
 function applyMUMPS!(factor::MUMPSfactorization{Complex128},rhs::Array{Complex128},
-                      x::Array{Complex128},tr=0)
+                      x::Array{Complex128},tr::Int=0)
 	n     = size(rhs,1)
 	nrhs  = size(rhs,2)
 	ptr = factor.ptr
@@ -125,7 +125,7 @@ function applyMUMPS!(factor::MUMPSfactorization{Complex128},rhs::Array{Complex12
 end
 
 function applyMUMPS!(factor::MUMPSfactorization{Complex128},rhs::SparseMatrixCSC{Complex128},
-                      x::Array{Complex128,2},tr=0)
+                      x::Array{Complex128,2},tr::Int=0)
 nrhs = size(rhs,2)
 nzrhs = nnz(rhs)
 ptr = factor.ptr
