@@ -87,7 +87,7 @@ function applyMUMPS{T1,T2,N}(factor::MUMPSfactorization{T1},rhs::AbstractArray{T
 		error("applyMUMPS: wrong size of x provided"); 
 	end
 	
-	return applyMUMPS!(factor,rhs,x)::Array{promote_type(T1,T2),N}
+	return applyMUMPS!(factor,rhs,x,tr)::Array{promote_type(T1,T2),N}
 end
 
 function applyMUMPS!(factor::MUMPSfactorization{Float64},rhs::Array{Float64},
