@@ -4,6 +4,7 @@ libdir = $(topdir)/lib
 
 metisdir = metis-5.1.0
 LMETISDIR = $(topdir)/../$(metisdir)/build/Linux-x86_64/libmetis/
+LMETISDIR = $(metisdir)/build/Darwin-x86_64/libmetis/
 
 include $(topdir)/Makefile.inc
 

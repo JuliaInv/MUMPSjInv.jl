@@ -80,11 +80,15 @@ function applyMUMPS{T1,T2,N}(factor::MUMPSfactorization{T1},rhs::AbstractArray{T
 	end
 	 
 	if size(rhs,1) != factor.n;  
-		error("applyMUMPS: wrong size of rhs, size(A)=$(factor.n), size(rhs)=$n x $nrhs."); 
+		error("applyMUMPS: wrong size of rhs, size(A)=$(factor.n), size(rhs)=$(size(rhs,1)) x $(size(rhs,2))."); 
 	end
     
 	if size(x)!=size(rhs); 
-		error("applyMUMPS: wrong size of x provided"); 
+		if isempty(x)
+			x = zeros(promote_type(T1,T2),size(rhs))
+		else
+			error("applyMUMPS: wrong size of x, size(A)=$(factor.n), size(rhs)=$(size(rhs)), size(x)=$(size(x)) provided"); 
+		end
 	end
 	
 	return applyMUMPS!(factor,rhs,x,tr)::Array{promote_type(T1,T2),N}
