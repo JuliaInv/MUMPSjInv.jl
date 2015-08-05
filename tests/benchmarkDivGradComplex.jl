@@ -16,7 +16,7 @@ for i=1:length(Ns)
 	
 	# solve using mumps
 	tic()
-	x = solveMUMPS(A,rhs,[],1,0);
+	x = solveMUMPS(A,rhs,1,0);
 	MUMPStime[i]= toc();
 	
 	# solve using mumps

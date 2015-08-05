@@ -3,7 +3,7 @@ using Base.Test
 include("getDivGrad.jl");
 Ns   = (32,48,64)
 nrhs = (1,10,100,500)
-rhsDensity = 0.01
+rhsDensity = 0.2
 MUMPStimeSparse =zeros(length(nrhs))
 MUMPStimeDense  =zeros(length(nrhs))
 
@@ -16,8 +16,8 @@ for i=1:length(Ns)
 	Afac1 = factorMUMPS(A,1)
 	Afac2 = factorMUMPS(A,1)
 	
-	rhsInit = spdiagm((ones(n),ones(n-Ns[i]),ones(n-2*Ns[i])),[0,Ns[i],2*Ns[i]],n,n)
-	#rhsInit = sprandn(n,nrhs[end],rhsDensity)
+	#rhsInit = spdiagm((ones(n),ones(n-Ns[i]),ones(n-2*Ns[i])),[0,Ns[i],2*Ns[i]],n,n)
+	rhsInit = sprandn(n,nrhs[end],rhsDensity)
 	for j = 1:length(nrhs)
 	  println(@sprintf("Solve with %d rhs",nrhs[j]));
 	  #rhs = sprandn(n,nrhs[j],rhsDensity)
@@ -26,13 +26,13 @@ for i=1:length(Ns)
 	  
 	  # solve using mumps with sparse RHS
 	  tic()
-	  x1 = applyMUMPS(Afac1,rhs,[])
+	  x1 = applyMUMPS(Afac1,rhs)
 	  MUMPStimeSparse[j]= toc();
 	
 	  # solve using mumps with dense rhs
 	  rhs = full(rhs)
 	  tic()
-	  x2 = applyMUMPS(Afac2,rhs,[])
+	  x2 = applyMUMPS(Afac2,rhs)
 	  MUMPStimeDense[j]= toc();
 	  for k = 1:nrhs[j]
 	    @test norm(x1[:,k]-x2[:,k])/norm(x1[:,k]) < 1e-9

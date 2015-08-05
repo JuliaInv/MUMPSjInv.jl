@@ -16,12 +16,12 @@ for i=1:length(Ns)
 	
 	# solve using mumps
 	tic()
-	x1 = solveMUMPS(A,rhs,[],1,1);
+	x1 = solveMUMPS(A,rhs,1,1);
 	MUMPStimeOOC[i]= toc();
 	
 	# solve using mumps in core
 	tic()
-	x2 = solveMUMPS(A,rhs,[],1,0);
+	x2 = solveMUMPS(A,rhs,1,0);
 	MUMPStime[i]= toc();
 
 	# solve using mumps
