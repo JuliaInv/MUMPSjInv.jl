@@ -225,7 +225,7 @@ logical,intent(in):: transpose  ! if .true. take the transpose
    ! The following is significant only on the host cpu.
    mumps_par%NRHS = nrhs  ! # of right-hand-sides
    mumps_par%LRHS = mumps_par%N  ! size of system
-
+   mumps_par%icntl(20) = 0  !Use dense rhs
    if (transpose) then
       mumps_par%icntl(9) = 0  ! for solving A'x = b
    else
