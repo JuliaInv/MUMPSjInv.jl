@@ -7,6 +7,7 @@ type MUMPSfactorization{T}
 	a11::T         # first element (HACK for generating the right parametric type)
 	time::Float64  # factorization time
 end
+	const MUMPSlibPath  = abspath(joinpath(splitdir(Base.source_path())[1],"..","lib","MUMPS"))
 	
 	include("MUMPSfuncs.jl")
 	
