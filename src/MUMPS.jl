@@ -1,5 +1,7 @@
 module MUMPS
 
+using Compat
+
 type MUMPSfactorization{T}
 	ptr::Int64     # pointer to factorization
 	worker::Int64  # id of worker that holds factorization

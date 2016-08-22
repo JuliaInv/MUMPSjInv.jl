@@ -1,6 +1,12 @@
 # Factorize two different matrices (one real, one complex) and solve for multiple rhs and free memory
 @everywhere using MUMPS
-using Base.Test
+if VERSION >= v"0.5.0-dev+7720"
+    using Base.Test
+else
+    using BaseTestNext
+    const Test = BaseTestNext
+end
+using Compat
 include("getDivGrad.jl");
 
 A  = getDivGrad(24,20,22);
@@ -18,19 +24,19 @@ rhs2 = randn(n2,nrhs);
 
 println("Factorize complex matrix on worker 1")
 tic();
-F1 = remotecall_fetch(workers()[1], factorMUMPS, A,1)
+F1 = remotecall_fetch(factorMUMPS,workers()[1], A,1)
 toc();
 dump(F1)
 
 println("Factorize real matrix on worker 2")
 tic();
-F2 = remotecall_fetch(workers()[2],factorMUMPS,A2,1)
+F2 = remotecall_fetch(factorMUMPS,workers()[2],A2,1)
 toc();
 dump(F2)
 
 println("Solve complex system on worker 1")
 tic();
-x = remotecall_fetch(workers()[3], applyMUMPS,F1,rhs)
+x = remotecall_fetch(applyMUMPS,workers()[3],F1,rhs)
 toc();
 err = zeros(nrhs)
 for i=1:nrhs
@@ -40,7 +46,7 @@ end
 
 println("Solve real system on worker 2")
 tic();
-x2 = remotecall_fetch(workers()[2],applyMUMPS,F2,rhs2)
+x2 = remotecall_fetch(applyMUMPS,workers()[2],F2,rhs2)
 toc();
 err = zeros(nrhs)
 for i=1:nrhs
@@ -50,11 +56,11 @@ end
 
 println("Free memory on worker 1")
 destroyMUMPS(F1)
-# remotecall_fetch( workers()[1], destroyMUMPS,F1);
+# remotecall_fetch(destroyMUMPS,workers()[1],F1);
 
 println("Free memory on worker 2")
 destroyMUMPS(F2)
-# remotecall_fetch( workers()[2], destroyMUMPS,F2);
+# remotecall_fetch(destroyMUMPS,workers()[2],F2);
 
 println("DONE!")
 
