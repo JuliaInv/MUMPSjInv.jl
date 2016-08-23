@@ -1,7 +1,12 @@
 # Factorize two different matrices (one real, one complex) and solve for multiple rhs and free memory
 
 using MUMPS
-using Base.Test
+if VERSION >= v"0.5.0-dev+7720"
+    using Base.Test
+else
+    using BaseTestNext
+    const Test = BaseTestNext
+end
 include("getDivGrad.jl");
 
 

@@ -1,5 +1,10 @@
 using MUMPS
-using Base.Test
+if VERSION >= v"0.5.0-dev+7720"
+    using Base.Test
+else
+    using BaseTestNext
+    const Test = BaseTestNext
+end
 include("getDivGrad.jl");
 Ns   = (32,48,64)
 nrhs = (1,10,100,500)

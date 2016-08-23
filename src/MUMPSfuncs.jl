@@ -75,7 +75,7 @@ function applyMUMPS{T1,T2,N}(factor::MUMPSfactorization{T1},rhs::AbstractArray{T
 	id1 = myid(); id2 = factor.worker
 	if id1 != id2
 		warn("Worker $id1 has no access to MUMPS factorization stored on $id2. Trying to remotecall!")
-		return remotecall_fetch(factor.worker,applyMUMPS,factor,rhs,x,tr)::Array{promote_type(T1,T2),N}
+		return remotecall_fetch(applyMUMPS,factor.worker,factor,rhs,x,tr)::Array{promote_type(T1,T2),N}
 	end
 	 
 	if size(rhs,1) != factor.n;  
@@ -146,7 +146,7 @@ function destroyMUMPS(factor::MUMPSfactorization{Float64})
 	 #  free memory
 	id1 = myid(); id2 = factor.worker;
 	if myid() != factor.worker
-		remotecall_fetch(id2,destroyMUMPS,factor)
+		remotecall_fetch(destroyMUMPS,id2,factor)
 		return
 	end
 	ccall( (:destroy_mumps_, MUMPSlibPath),
@@ -161,7 +161,7 @@ function destroyMUMPS(factor::MUMPSfactorization{Complex128})
 	 #  free memory
 	id1 = myid(); id2 = factor.worker;
 	if myid() != factor.worker
-		remotecall_fetch(id2,destroyMUMPS,factor)
+		remotecall_fetch(destroyMUMPS,id2,factor)
 		return
 	end
 	 ccall( (:destroy_mumps_cmplx_, MUMPSlibPath),
