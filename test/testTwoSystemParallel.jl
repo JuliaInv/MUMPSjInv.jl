@@ -1,4 +1,7 @@
 # Factorize two different matrices (one real, one complex) and solve for multiple rhs and free memory
+if nworkers()<3
+    addprocs(3)
+end
 @everywhere using MUMPS
 if VERSION >= v"0.5.0-dev+7720"
     using Base.Test
