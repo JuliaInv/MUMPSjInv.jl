@@ -116,6 +116,19 @@ function applyMUMPS!(factor::MUMPSfactorization{Float64},rhs::SparseMatrixCSC{Fl
 	return x
 end
 
+function applyMUMPS!(factor::MUMPSfactorization{Float64},rhs::SparseVector{Float64}, x::Array{Float64,1},tr::Int=0)
+	nrhs = 1
+	nzrhs = nnz(rhs)
+	colptr = [1;3]
+	ptr = factor.ptr
+	ccall( (:solve_mumps_sparse_rhs_, MUMPSlibPath),
+              Void, (Ptr{Int64}, Ptr{Int64}, Ptr{Int64}, Ptr{Float64}, Ptr{Int64}, Ptr{Int64},
+	      	  Ptr{Float64}, Ptr{Int64} ),
+		      &ptr, &nzrhs, &nrhs, rhs.nzval, rhs.nzind, colptr, x, &tr)
+
+	return x
+end
+
 function applyMUMPS!(factor::MUMPSfactorization{Complex128},rhs::Array{Complex128},
                       x::Array{Complex128},tr::Int=0)
 	n     = size(rhs,1)
@@ -140,7 +153,19 @@ ccall( (:solve_mumps_cmplx_sparse_rhs_, MUMPSlibPath),
 return x
 end
 
-	
+function applyMUMPS!(factor::MUMPSfactorization{Complex128},rhs::SparseVector{Complex128},
+                      x::Array{Complex128,1},tr::Int=0)
+nrhs = 1
+nzrhs = nnz(rhs)
+colptr = [1;3]
+ptr = factor.ptr
+ccall( (:solve_mumps_cmplx_sparse_rhs_, MUMPSlibPath),
+			Void, (Ptr{Int64}, Ptr{Int64}, Ptr{Int64}, Ptr{Complex128}, Ptr{Int64}, 
+			Ptr{Int64}, Ptr{Complex64}, Ptr{Int64} ),
+			&ptr, &nzrhs,&nrhs, convert(Ptr{Complex128}, pointer(rhs.nzval)), rhs.nzind, 
+			colptr, convert(Ptr{Complex128}, pointer(x)), &tr)
+return x
+end	
 
 function destroyMUMPS(factor::MUMPSfactorization{Float64})
 	 #  free memory
