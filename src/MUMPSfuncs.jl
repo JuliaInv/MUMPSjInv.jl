@@ -56,7 +56,7 @@ end
 
 function checkMUMPSerror(mumpsstat)
 	# check if MUMPS reported error
-	
+
 	if mumpsstat[1]==-10
 	     error("MUMPS: Numerically singular matrix.");
 	elseif mumpsstat[1]==-13
@@ -77,19 +77,19 @@ function applyMUMPS{T1,T2,N}(factor::MUMPSfactorization{T1},rhs::AbstractArray{T
 		warn("Worker $id1 has no access to MUMPS factorization stored on $id2. Trying to remotecall!")
 		return remotecall_fetch(applyMUMPS,factor.worker,factor,rhs,x,tr)::Array{promote_type(T1,T2),N}
 	end
-	 
-	if size(rhs,1) != factor.n;  
-		error("applyMUMPS: wrong size of rhs, size(A)=$(factor.n), size(rhs)=$(size(rhs,1)) x $(size(rhs,2))."); 
+
+	if size(rhs,1) != factor.n;
+		error("applyMUMPS: wrong size of rhs, size(A)=$(factor.n), size(rhs)=$(size(rhs,1)) x $(size(rhs,2)).");
 	end
-    
-	if size(x)!=size(rhs); 
+
+	if size(x)!=size(rhs);
 		if isempty(x)
 			x = zeros(promote_type(T1,T2),size(rhs))
 		else
-			error("applyMUMPS: wrong size of x, size(A)=$(factor.n), size(rhs)=$(size(rhs)), size(x)=$(size(x)) provided"); 
+			error("applyMUMPS: wrong size of x, size(A)=$(factor.n), size(rhs)=$(size(rhs)), size(x)=$(size(x)) provided");
 		end
 	end
-	
+
 	return applyMUMPS!(factor,rhs,x,tr)::Array{promote_type(T1,T2),N}
 end
 
@@ -116,6 +116,19 @@ function applyMUMPS!(factor::MUMPSfactorization{Float64},rhs::SparseMatrixCSC{Fl
 	return x
 end
 
+function applyMUMPS!(factor::MUMPSfactorization{Float64},rhs::SparseVector{Float64}, x::Array{Float64,1},tr::Int=0)
+	nrhs = 1
+	nzrhs = nnz(rhs)
+	colptr = [1; nzrhs+1]
+	ptr = factor.ptr
+	ccall( (:solve_mumps_sparse_rhs_, MUMPSlibPath),
+              Void, (Ptr{Int64}, Ptr{Int64}, Ptr{Int64}, Ptr{Float64}, Ptr{Int64}, Ptr{Int64},
+	      	  Ptr{Float64}, Ptr{Int64} ),
+		      &ptr, &nzrhs, &nrhs, rhs.nzval, rhs.nzind, colptr, x, &tr)
+
+	return x
+end
+
 function applyMUMPS!(factor::MUMPSfactorization{Complex128},rhs::Array{Complex128},
                       x::Array{Complex128},tr::Int=0)
 	n     = size(rhs,1)
@@ -133,14 +146,26 @@ nrhs = size(rhs,2)
 nzrhs = nnz(rhs)
 ptr = factor.ptr
 ccall( (:solve_mumps_cmplx_sparse_rhs_, MUMPSlibPath),
-			Void, (Ptr{Int64}, Ptr{Int64}, Ptr{Int64}, Ptr{Complex128}, Ptr{Int64}, 
+			Void, (Ptr{Int64}, Ptr{Int64}, Ptr{Int64}, Ptr{Complex128}, Ptr{Int64},
 			Ptr{Int64}, Ptr{Complex64}, Ptr{Int64} ),
-			&ptr, &nzrhs,&nrhs, convert(Ptr{Complex128}, pointer(rhs.nzval)), rhs.rowval, 
+			&ptr, &nzrhs,&nrhs, convert(Ptr{Complex128}, pointer(rhs.nzval)), rhs.rowval,
 			rhs.colptr, convert(Ptr{Complex128}, pointer(x)), &tr)
 return x
 end
 
-	
+function applyMUMPS!(factor::MUMPSfactorization{Complex128},rhs::SparseVector{Complex128},
+                      x::Array{Complex128,1},tr::Int=0)
+nrhs = 1
+nzrhs = nnz(rhs)
+colptr = [1; nzrhs + 1]
+ptr = factor.ptr
+ccall( (:solve_mumps_cmplx_sparse_rhs_, MUMPSlibPath),
+			Void, (Ptr{Int64}, Ptr{Int64}, Ptr{Int64}, Ptr{Complex128}, Ptr{Int64},
+			Ptr{Int64}, Ptr{Complex64}, Ptr{Int64} ),
+			&ptr, &nzrhs,&nrhs, convert(Ptr{Complex128}, pointer(rhs.nzval)), rhs.nzind,
+			colptr, convert(Ptr{Complex128}, pointer(x)), &tr)
+return x
+end
 
 function destroyMUMPS(factor::MUMPSfactorization{Float64})
 	 #  free memory

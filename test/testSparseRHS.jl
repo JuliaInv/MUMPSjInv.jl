@@ -18,6 +18,13 @@ x = solveMUMPS(A,rhs,1);
 err  =  norm(A*x-full(rhs)) / norm(full(rhs));
 @test err < 1e-14
 
+# rhs as sparse vector instead of n X 1 sparse matrix
+rhs = vec(rhs)
+
+x = solveMUMPS(A,rhs,1);
+err  =  norm(A*x-full(rhs)) / norm(full(rhs));
+@test err < 1e-14
+
 # REAL: test for multiple rhs
 println("Test for real SPD matrix: multiple sparse random rhs");
 nrhs = 10;
@@ -50,7 +57,16 @@ println("Test for complex SPD matrix: one rhs");
 r = rand(n);
 A = A + im*spdiagm(r,0);
 
-rhs = sprandn(n,1,0.03) + im*sprandn(n,1,0.03);
+rhs = sprandn(n,1,0.03) + im*sprandn(n,1,0.03)
+
+x = solveMUMPS(A,rhs,2);
+
+err=  norm(A*x-full(rhs)) / norm(full(rhs))
+@test eltype(x) == Complex128
+@test err < 1e-14
+
+# sparse vector rhs
+rhs = vec(sprandn(n,1,0.03) + im*sprandn(n,1,0.03))
 
 x = solveMUMPS(A,rhs,2);
 

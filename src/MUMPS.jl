@@ -1,3 +1,5 @@
+__precompile__()
+
 module MUMPS
 
 using Compat
@@ -10,9 +12,9 @@ type MUMPSfactorization{T}
 	time::Float64  # factorization time
 end
 	const MUMPSlibPath  = abspath(joinpath(splitdir(Base.source_path())[1],"..","lib","MUMPS"))
-	
+
 	include("MUMPSfuncs.jl")
-	
+
 	export solveMUMPS,solveMUMPS!, factorMUMPS, applyMUMPS,applyMUMPS!,destroyMUMPS, MUMPSfactorization
-	
+
 end
