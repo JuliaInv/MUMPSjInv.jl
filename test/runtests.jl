@@ -1,6 +1,5 @@
 using Test
 
-println("test MUMPS")
 @testset "MUMPS" begin
     @testset "DivGrad" begin include("testDivGrad.jl") end
     @testset "Two systems" begin include("testTwoSystem.jl") end
