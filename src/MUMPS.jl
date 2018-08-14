@@ -1,10 +1,14 @@
-__precompile__()
+# __precompile__()
 
 module MUMPS
 
 using Compat
 
-type MUMPSfactorization{T}
+using Distributed
+using SparseArrays
+using Printf
+
+mutable struct MUMPSfactorization{T}
 	ptr::Int64     # pointer to factorization
 	worker::Int64  # id of worker that holds factorization
 	n::Int64       # matrix size

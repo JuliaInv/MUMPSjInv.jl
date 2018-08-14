@@ -1,4 +1,4 @@
-using Base.Test
+using Test
 
 println("test MUMPS")
 @testset "MUMPS" begin
