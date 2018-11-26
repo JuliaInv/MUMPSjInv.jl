@@ -2,7 +2,6 @@ __precompile__()
 
 module MUMPS
 
-using Compat
 using Distributed
 using SparseArrays
 using Printf

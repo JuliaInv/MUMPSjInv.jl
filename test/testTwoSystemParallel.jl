@@ -5,7 +5,6 @@ if nworkers()<3
 end
 @everywhere using MUMPS
 using Test
-using Compat
 
 include("getDivGrad.jl");
 A = getDivGrad(24,20,22);
