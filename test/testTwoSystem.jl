@@ -1,60 +1,40 @@
 # Factorize two different matrices (one real, one complex) and solve for multiple rhs and free memory
-
 using MUMPS
-if VERSION >= v"0.5.0-dev+7720"
-    using Base.Test
-else
-    using BaseTestNext
-    const Test = BaseTestNext
-end
-include("getDivGrad.jl");
+using Test
 
+include("getDivGrad.jl")
+A = getDivGrad(24, 23, 25)
+A2 = getDivGrad(34, 32, 36)
+n = size(A, 1)
+n2 = size(A2, 1)
+A = A + im * spdiagm(0 => rand(n))
 
-A  = getDivGrad(24,23,25);
-A2 = getDivGrad(34,32,36);
-
-n  = size(A,1);
-n2 = size(A2,1);
-A  = A + im*spdiagm(rand(n),0);
-
-nrhs = 10;
-rhs = randn(n,nrhs) + im*randn(n,nrhs);
-rhs2 = randn(n2,nrhs);
+nrhs = 10
+rhs = randn(n, nrhs) + im*randn(n, nrhs)
+rhs2 = randn(n2, nrhs)
 
 println("Factorize complex matrix")
-tic();
-F1 = factorMUMPS(A,1);
-toc();
+@time F1 = factorMUMPS(A,1)
 
 println("Factorize real matrix")
-tic();
-F2 = factorMUMPS(A2,1);
-toc();
+@time F2 = factorMUMPS(A2,1)
 
 println("Solve complex system")
-tic();
-x = applyMUMPS(F1,rhs);
-toc();
+@time x = applyMUMPS(F1,rhs)
 err = zeros(nrhs)
 for i=1:nrhs
-        err[i] =  norm(A*x[:,i]-rhs[:,i]) / norm(rhs[:,i]);
+    err[i] = norm(A * x[:, i] - rhs[:, i]) / norm(rhs[:, i])
 end
 @test maximum(err) < 1e-14
 
 println("Solve real system")
-tic();
-x2 = applyMUMPS(F2,rhs2);
-toc();
+@time x2 = applyMUMPS(F2, rhs2)
 err = zeros(nrhs)
-for i=1:nrhs
-        err[i] =  norm(A2*x2[:,i]-rhs2[:,i]) / norm(rhs2[:,i]);
+for i = 1:nrhs
+    err[i] = norm(A2 * x2[:, i] - rhs2[:, i]) / norm(rhs2[:, i])
 end
 @test maximum(err) < 1e-14
 
 println("Free memory")
-destroyMUMPS(F1);
-destroyMUMPS(F2);
-
-println("DONE!")
-
-
+destroyMUMPS(F1)
+destroyMUMPS(F2)
