@@ -1,10 +1,10 @@
 using MUMPS
-if VERSION >= v"0.5.0-dev+7720"
-    using Base.Test
-else
-    using BaseTestNext
-    const Test = BaseTestNext
-end
+using Test
+using LinearAlgebra
+using SparseArrays
+using Printf
+
+
 include("getDivGrad.jl");
 Ns = (8,16,24,32,48,64)
 MUMPStime=zeros(length(Ns))
@@ -20,19 +20,18 @@ for i=1:length(Ns)
     rhs = randn(n);
 	
 	# solve using mumps
-	tic()
-	x = solveMUMPS(A,rhs,1,1);
-	MUMPStimeOOC[i]= toc();
-	
+	MUMPStimeOOC[i] = @elapsed begin
+		x = solveMUMPS(A,rhs,1,1);
+	end	
 	# solve using mumps in core
-	tic()
-	x = solveMUMPS(A,rhs,1,0);
-	MUMPStime[i]= toc();
+	MUMPStime[i] = @elapsed begin
+		x = solveMUMPS(A,rhs,1,0);
+	end
 
 	# solve using mumps
-	tic()
-	x = A\rhs;
-	Juliatime[i]= toc();
+	Juliatime[i] = @elapsed begin
+		x = A\rhs;
+	end
 end
 
 for i=1:length(Ns)

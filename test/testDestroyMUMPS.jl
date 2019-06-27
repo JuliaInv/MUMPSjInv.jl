@@ -1,17 +1,14 @@
 # Factorize two different matrices (one real, one complex) and solve for multiple rhs and free memory
-@everywhere using MUMPS
-if VERSION >= v"0.5.0-dev+7720"
-    using Base.Test
-else
-    using BaseTestNext
-    const Test = BaseTestNext
-end
-using Compat
+using Distributed
+using LinearAlgebra
+using SparseArrays
+using Test
+
 include("getDivGrad.jl");
 
 Ar = getDivGrad(30,31,33);
 n  = size(Ar,1);
-Ac  = Ar + im*spdiagm(rand(n),0);
+Ac  = Ar + im*spdiagm(0=>rand(n));
 
 nrhs = 10;
 rhsr = randn(n,nrhs) + im*randn(n,nrhs);
@@ -28,14 +25,13 @@ rhsc = randn(n,nrhs);
 # toc();
 
 println("Factorize real matrix on remote worker and destroy")
-tic();
-fact = 0;
-for i=1:100;
-	fact = remotecall_fetch(factorMUMPS,workers()[1], Ar,1)
-	remotecall_fetch(destroyMUMPS,workers()[1],fact)
+@time begin
+	fact = 0;
+	for i=1:10;
+		fact = remotecall_fetch(factorMUMPS,workers()[1], Ar,1)
+		remotecall_fetch(destroyMUMPS,workers()[1],fact)
+	end
 end
-toc();
-
 println("DONE!")
 
 

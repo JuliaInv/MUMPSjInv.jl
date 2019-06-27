@@ -1,4 +1,7 @@
-using Base.Test
+using Test
+using SparseArrays
+using LinearAlgebra
+using Distributed
 
 println("test MUMPS")
 @testset "MUMPS" begin

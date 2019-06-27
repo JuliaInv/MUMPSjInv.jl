@@ -1,11 +1,9 @@
 # Test for solving div-grad system both complex and real and single and multiple rhs
 using MUMPS
-if VERSION >= v"0.5.0-dev+7720"
-    using Base.Test
-else
-    using BaseTestNext
-    const Test = BaseTestNext
-end
+using Test
+using LinearAlgebra
+using SparseArrays
+
 include("getDivGrad.jl");
 
 A = getDivGrad(32,32,16);
@@ -36,14 +34,14 @@ end
 # COMPLEX: test for multiple rhs
 println("Test for complex symmetric matrix: one rhs");
 r = rand(n);
-A = A + im*spdiagm(r,0);
+A = A + im*spdiagm(0=>r);
 
 rhs = randn(n) + im*randn(n);
 
 x = solveMUMPS(A,rhs,1);
 
 err=  norm(A*x-rhs) / norm(rhs);
-@test eltype(x) == Complex128
+@test eltype(x) == ComplexF64
 @test err < 1e-14
 
 # COMPLEX : test for multiple rhs
@@ -56,7 +54,7 @@ err = zeros(nrhs)
 for i=1:nrhs
         err[i] =  norm(A*x[:,i]-rhs[:,i]) / norm(rhs[:,i]);
 end
-@test eltype(x) == Complex128
+@test eltype(x) == ComplexF64
 @test maximum(err) < 1e-14
 
 println("DONE!")

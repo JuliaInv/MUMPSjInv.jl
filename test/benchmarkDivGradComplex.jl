@@ -1,6 +1,6 @@
 using MUMPS
 if VERSION >= v"0.5.0-dev+7720"
-    using Base.Test
+    using Test
 else
     using BaseTestNext
     const Test = BaseTestNext

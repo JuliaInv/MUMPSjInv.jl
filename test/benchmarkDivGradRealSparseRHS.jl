@@ -1,10 +1,9 @@
 using MUMPS
-if VERSION >= v"0.5.0-dev+7720"
-    using Base.Test
-else
-    using BaseTestNext
-    const Test = BaseTestNext
-end
+using Test
+using LinearAlgebra
+using SparseArrays
+using Printf
+
 include("getDivGrad.jl");
 Ns   = (32,48,64)
 nrhs = (1,10,100,500)
@@ -30,16 +29,16 @@ for i=1:length(Ns)
 	  rhs = rhsInit[:,1:nrhs[j]]
 	  
 	  # solve using mumps with sparse RHS
-	  tic()
-	  x1 = applyMUMPS(Afac1,rhs)
-	  MUMPStimeSparse[j]= toc();
-	
+	  MUMPStimeSparse[j] = @elapsed begin
+		  x1 = applyMUMPS(Afac1,rhs)
+	  end
+	  
 	  # solve using mumps with dense rhs
-	  rhs = full(rhs)
-	  tic()
-	  x2 = applyMUMPS(Afac2,rhs)
-	  MUMPStimeDense[j]= toc();
-	  for k = 1:nrhs[j]
+	  rhs = Matrix(rhs)
+	  MUMPStimeDense[j] = @elapsed begin
+		  x2 = applyMUMPS(Afac2,rhs)
+	  end 
+  	  for k = 1:nrhs[j]
 	    @test norm(x1[:,k]-x2[:,k])/norm(x1[:,k]) < 1e-9
 	  end
         end
