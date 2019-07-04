@@ -1,6 +1,6 @@
 __precompile__()
 
-module MUMPS
+module MUMPSjInv
 
 using LinearAlgebra
 using SparseArrays

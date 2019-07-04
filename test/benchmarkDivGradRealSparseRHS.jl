@@ -1,4 +1,4 @@
-using MUMPS
+using MUMPSjInv
 using Test
 using LinearAlgebra
 using SparseArrays
@@ -28,12 +28,12 @@ for i=1:length(Ns)
 	  #rhs = spdiagm((0.8*ones(n-1),1.25*ones(n)),[-1,0],n,n)
 	  rhs = rhsInit[:,1:nrhs[j]]
 	  
-	  # solve using mumps with sparse RHS
+	  # solve using MUMPSjInv with sparse RHS
 	  MUMPStimeSparse[j] = @elapsed begin
 		  x1 = applyMUMPS(Afac1,rhs)
 	  end
 	  
-	  # solve using mumps with dense rhs
+	  # solve using MUMPSjInv with dense rhs
 	  rhs = Matrix(rhs)
 	  MUMPStimeDense[j] = @elapsed begin
 		  x2 = applyMUMPS(Afac2,rhs)

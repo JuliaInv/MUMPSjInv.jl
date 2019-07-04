@@ -1,4 +1,4 @@
-using MUMPS
+using MUMPSjInv
 using Test
 using LinearAlgebra
 using SparseArrays

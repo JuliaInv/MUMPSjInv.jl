@@ -1,4 +1,4 @@
-using MUMPS
+using MUMPSjInv
 if VERSION >= v"0.5.0-dev+7720"
     using Test
 else
@@ -18,17 +18,16 @@ for i=1:length(Ns)
     r = ones(n);
 	A = A + im*spdiagm(r,0);
 	rhs = randn(n,nrhs)+ im*randn(n,nrhs)
-	
-	# solve using mumps
-	tic()
-	x = solveMUMPS(A,rhs,1,0);
-	MUMPStime[i]= toc();
-	
-	# solve using mumps
-	tic()
-	# x = solveMUMPS(A,rhs,[],1,1);
-	x = A\rhs;
-	Juliatime[i]= toc();
+
+	# solve using MUMPSjInv
+	@elapsed MUMPStime[i] = begin
+	    x = solveMUMPS(A,rhs,1,0);
+    end
+
+	# solve using MUMPSjInv
+	Juliatime[i]= @elapsed
+        x = A\rhs;
+    end
 end
 
 println(@sprintf("| %4s | %8s | %8s | %8s |","n","MUMPS","Julia","speedup"))

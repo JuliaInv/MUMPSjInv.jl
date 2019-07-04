@@ -1,4 +1,4 @@
-using MUMPS
+using MUMPSjInv
 using Test
 using LinearAlgebra
 using SparseArrays
@@ -19,16 +19,16 @@ for i=1:length(Ns)
 	n = size(A,1);
     rhs = randn(n);
 	
-	# solve using mumps
+	# solve using MUMPSjInv
 	MUMPStimeOOC[i] = @elapsed begin
 		x = solveMUMPS(A,rhs,1,1);
 	end	
-	# solve using mumps in core
+	# solve using MUMPSjInv in core
 	MUMPStime[i] = @elapsed begin
 		x = solveMUMPS(A,rhs,1,0);
 	end
 
-	# solve using mumps
+	# solve using MUMPSjInv
 	Juliatime[i] = @elapsed begin
 		x = A\rhs;
 	end

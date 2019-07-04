@@ -1,9 +1,9 @@
-name = "MUMPS"
-uuid = "bf6389e2-cca1-5e17-ac22-36425c4ccbb4"
+name = "MUMPSjInv"
+uuid = "5efe4092-008e-54d5-a60f-5d714b241ba2"
 version = "0.1.0"
 
 [compat]
-julia = "0.7.0"
+julia = "1"
 
 [deps]
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"

@@ -1,4 +1,4 @@
-using MUMPS
+using MUMPSjInv
 using Test
 using LinearAlgebra
 using SparseArrays
@@ -18,12 +18,12 @@ for i=1:length(Ns)
 	n = size(A,1);
     rhs = randn(n);
 	
-	# solve using mumps, out-of-core
+	# solve using MUMPSjInv, out-of-core
 	MUMPStimeOOC[i]= @elapsed begin
 		x1 = solveMUMPS(A,rhs,1,1);
 	end
 
-	# solve using mumps in core
+	# solve using MUMPSjInv in core
 	MUMPStime[i]= @elapsed begin
 		x2 = solveMUMPS(A,rhs,1,0);
 	end

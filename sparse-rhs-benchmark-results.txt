@@ -1,8 +1,8 @@
 Two benchmarking tests were performed for both real and complex systems. The real matrices were discretizations of divGrad formed using getDivGrad.jl. The complex matrices were divGrad plus an imaginary identity matrix. Each matrix was factored and the factorization stored. The solution was then computed by calling applyMUMPS. The timings below are wall-times for single calls to applyMUMPS, measured using
 
-tic()
+runtime = @elapsed begin
 x = applyMUMPS(...)
-runtime = toc()
+end
 
 Sparse right hand sides were constructed as CSC sparse matrices and dense right hand sides by
 
@@ -10,7 +10,7 @@ rhsDense = full(rhsSparse)
 
 The first test used a right hand side with only 3 non-zeros entries per rhs. Other tests used random sparse rhs constructed with the sprandn function.
 
-Legend: 
+Legend:
 denseRHS  = wall-time for solve with dense right hand sides
 sparseRHS = wall-time for solve with sparse right hand sides
 speedup = denseRHS/sparseRHS
@@ -90,7 +90,7 @@ real Matrix, random rhs (10% non-zeros)
 | 10   | 1.43663   | 1.42350  |  0.99086 |
 | 100  | 12.61634  | 12.40752 |  0.98345 |
 | 500  | 57.47922  | 55.99277 |  0.97414 |
- 
+
 ----------------------------------------------------
 
 Complex matrix, structured rhs

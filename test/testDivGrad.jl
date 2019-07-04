@@ -1,5 +1,5 @@
 # Test for solving div-grad system both complex and real and single and multiple rhs
-using MUMPS
+using MUMPSjInv
 using Test
 using LinearAlgebra
 using SparseArrays
