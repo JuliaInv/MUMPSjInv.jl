@@ -1,6 +1,6 @@
 __precompile__()
 
-module MUMPS
+module MUMPSjInv
 
 using Distributed
 using SparseArrays

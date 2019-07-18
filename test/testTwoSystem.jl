@@ -1,5 +1,5 @@
 # Factorize two different matrices (one real, one complex) and solve for multiple rhs and free memory
-using MUMPS
+using MUMPSjInv
 using Test
 
 include("getDivGrad.jl")

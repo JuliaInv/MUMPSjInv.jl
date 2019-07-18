@@ -1,4 +1,4 @@
-using MUMPS
+using MUMPSjInv
 using Test
 
 include("getDivGrad.jl")

@@ -34,7 +34,9 @@ else
    FL      = gfortran
    OPTF    = -O3 -fPIC -fdefault-integer-8
    OPTL    = $(OPTF) -shared -fcray-pointer
-   LIBBLAS = /opt/OpenBLAS/lib/libopenblas_haswellp-r0.2.14.a 
+   #LIBBLAS = /opt/OpenBLAS/lib/libopenblas_haswellp-r0.2.14.a 
+   #LIBBLAS =  -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_gf_ilp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl
+   LIBBLAS =  -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_gf_ilp64.a ${MKLROOT}/lib/intel64/libmkl_intel_thread.a ${MKLROOT}/lib/intel64/libmkl_core.a -Wl,--end-group -liomp5 -lpthread -lm -ldl
    LMETISDIR = $(topdir)/../$(metisdir)/build/Linux-x86_64/libmetis/
    
 

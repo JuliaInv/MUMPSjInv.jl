@@ -1,6 +1,6 @@
 using Test
 
-@testset "MUMPS" begin
+@testset "MUMPSjInv" begin
     @testset "DivGrad" begin include("testDivGrad.jl") end
     @testset "Two systems" begin include("testTwoSystem.jl") end
     @testset "Two systems parallel" begin include("testTwoSystemParallel.jl") end

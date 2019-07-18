@@ -3,7 +3,7 @@ using Distributed
 if nworkers()<3
     addprocs(3)
 end
-@everywhere using MUMPS
+@everywhere using MUMPSjInv
 using Test
 
 include("getDivGrad.jl");

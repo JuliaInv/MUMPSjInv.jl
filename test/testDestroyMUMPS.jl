@@ -4,7 +4,7 @@ using Distributed
 addprocs(1)
 
 # Factorize two different matrices (one real, one complex) and solve for multiple rhs and free memory
-@everywhere using MUMPS
+@everywhere using MUMPSjInv
 
 include("getDivGrad.jl")
 
