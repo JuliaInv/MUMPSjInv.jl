@@ -2,12 +2,14 @@ name = "MUMPSjInv"
 uuid = "5efe4092-008e-54d5-a60f-5d714b241ba2"
 version = "0.1.0"
 
-[compat]
-julia = "0.7, 1.0, 1.1"
-
 [deps]
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
+Libdl = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+jInv = "3dacf901-f8cd-5544-86ed-7a705f85c244"
+
+[compat]
+julia = "0.7, 1.0, 1.1"
