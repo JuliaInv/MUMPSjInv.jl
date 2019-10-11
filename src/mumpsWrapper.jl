@@ -6,6 +6,7 @@ import jInv.LinearSolvers.AbstractSolver
 import jInv.LinearSolvers.AbstractDirectSolver
 import jInv.LinearSolvers.factorLinearSystem!
 import jInv.LinearSolvers.solveLinearSystem
+import jInv.LinearSolvers.solveLinearSystem!
 
 export MUMPSsolver, getMUMPSsolver,copySolver
 

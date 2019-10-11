@@ -12,4 +12,4 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 jInv = "3dacf901-f8cd-5544-86ed-7a705f85c244"
 
 [compat]
-julia = "0.7, 1.0, 1.1"
+julia = "0.7, 1.0, 1.1, 1.2"

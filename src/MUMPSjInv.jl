@@ -2,6 +2,7 @@ __precompile__()
 
 module MUMPSjInv
 
+using jInv
 using LinearAlgebra
 using SparseArrays
 using Distributed
