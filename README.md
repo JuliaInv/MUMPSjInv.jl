@@ -1,5 +1,7 @@
 # MUMPSjInv
 
+**This package is not longer maintained and will not work with more recent Julia verions. See https://github.com/JuliaSmoothOptimizers/MUMPS.jl for an up-to-date interface.**
+
 Efficiently solving large and sparse linear systems is essential in many areas of scientific computing. This project provides an interface to [MUMPS ( a MUltifrontal Massively Parallel sparse direct Solver)](http://mumps.enseeiht.fr/) in Julia. To improve the memory-efficiency of the method the software package  [METIS (Serial Graph Partitioning and Fill-reducing Matrix Ordering)](http://glaros.dtc.umn.edu/gkhome/views/metis) is used. Please refer to the MUMPS and metis websites for more information and updated versions.
 
 ## Copyright
